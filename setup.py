@@ -3,17 +3,28 @@ from setuptools import setup
 with open('README.md', 'r') as desc_file:
     long_description = desc_file.read()
 
+with open('./mieaa/_version.py') as version_file:
+    exec(version_file.read().strip())
+
 setup(
     name='mieaa',
+    version=__version__,
     description='miEAA command line interface and api wrapper',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    version='0.1.5',
-    author='Chair for Clinical Bioinformatics at Saarland University',
-    author_email='ccb.unisb@gmail.com',
-    url='https://github.com/Xethic/miEAA-API',
+    license='MIT',
+    author='Jeffrey Solomon',
+    maintainer='Chair for Clinical Bioinformatics at Saarland University',
+    maintainer_email='ccb.unisb@gmail.com',
+    url='https://ccb-compute2.cs.uni-saarland.de/mieaa_tool/',
+    download_url='https://pypi.org/project/mieaa/#files',
+    project_urls={
+        "Bug Tracker": "https://github.com/Xethic/miEAA-API/issues",
+        "Documentation": 'https://github.com/Xethic/miEAA-API',
+        "Source Code": 'https://github.com/Xethic/miEAA-API',
+    },
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',

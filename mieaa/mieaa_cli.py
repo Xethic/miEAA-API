@@ -1,6 +1,6 @@
 import argparse
 from .mieaa_wrapper import API
-
+from ._version import __version__
 
 def type_converter(mieaa, args):
     mirnas = args.mirna_set_file if args.mirna_set_file else args.mirna_set
@@ -49,8 +49,8 @@ def create_subcommands(subparsers):
     mirna_set_group.add_argument('-m', '--mirna-set', nargs='+', help='miRNA/precursor target set')
     mirna_set_group.add_argument('-M', '--mirna-set-file', type=argparse.FileType('r'),
         help='Specify miRNA/precursor target set via file')
-    abstract_parser.add_argument('-p', '--precursor', action='store_const', const='precursor', default='mirna',
-        dest='mirna_type', help='Use if running on a set of precursors as opposed to miRNAs')
+    abstract_parser.add_argument('-p', '--precursor', '--precursors', action='store_const', const='precursor',
+        default='mirna', dest='mirna_type', help='Use if running on a set of precursors as opposed to miRNAs')
     abstract_parser.add_argument('-o', '--outfile', type=argparse.FileType('w+'),
         help='Save results to provided file')
     abstract_parser.add_argument('-v', '--verbose', action='store_true', help='Always print results to stdout')
@@ -138,6 +138,7 @@ def main():
 
     # Base parser requiring subcommands
     mieaa_parser = argparse.ArgumentParser(prog='miEAA', description='miEAA Command Line Tool')
+    mieaa_parser.add_argument('--version', action='version', version='{} {}'.format(mieaa_parser.prog, __version__))
     mieaa_subparsers = mieaa_parser.add_subparsers(required=True)
     create_subcommands(mieaa_subparsers)
 
