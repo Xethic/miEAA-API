@@ -3,7 +3,7 @@
 The miRNA Enrichment Analysis and Annotation Tool (miEAA) facilitates the functional analysis of sets of miRNAs.  
 This package provides a command line interface and wrapper for the miEAA API.
 
-To learn more about miEAA or to utilize our online interface, please visit our [web server](https://ccb-compute2.cs.uni-saarland.de/mieaa_tool/).  
+To learn more about miEAA or to utilize our online interface, please visit our [web server](https://www.ccb.uni-saarland.de/mieaa_tool).  
 All miEAA tools are provided and hosted by the [Chair for Clinical Bioinformatics at Saarland University](https://www.ccb.uni-saarland.de/).
 
 This package allows users to execute miEAA directly from the command line:

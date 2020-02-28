@@ -1,6 +1,6 @@
 # miEAA API Wrapper Usage
 
-A barebones example script can be found [here](./example_script.py)
+A barebones example script can be found [here](./example_script.py).
 
 ```python
 from mieaa import API
@@ -8,7 +8,7 @@ from mieaa import API
 mieaa_api = API()
 ```
 
-Target sets, Categories, and reference sets support strings, iterables, and file objects.
+Target sets, categories, and reference sets support strings, iterables, and file objects.
 
 Mixed delimiters should still function, but are not recommended.
 
@@ -19,7 +19,7 @@ initial_mirnas = 'hsa-miR-374c hsa-miR-642b,hsa-miR-550b;hsa-miR-107;hsa-miR-125
 ```
 
 ## Convert between miRBase versions
-Results can be optionally saved to a file by specifying the `to_file` argument
+Results can be optionally saved to a file by specifying the `to_file` argument.
 
 
 ```python
@@ -111,15 +111,14 @@ mieaa_api.get_progress()
 
 
 ### Retrieving Enrichment Results
-Get results after enrichment analysis has been completed.  
-Determine how often to check progress via `check_progress_interval` (default is 5 seconds)
+Get results after enrichment analysis has been completed, determining how often to check progress via `check_progress_interval` (default is 5 seconds).
 
 
 ```python
 json = mieaa_api.get_results(check_progress_interval=5)
 ```
 
-The returned data is easily usable with pandas
+The returned data can be easily turned into a pandas dataframe.
 
 
 ```python
@@ -208,7 +207,7 @@ df.head()
 
 
 
-Results can also be obtained as a csv string
+Results can also be obtained as a csv string.
 
 
 ```python
@@ -224,7 +223,7 @@ Results can be automatically saved to a json or csv (default) file.
 file_contents = mieaa_api.save_enrichment_results('./results.csv')
 ```
 
-Alternatively, we can write the csv results to a file
+Alternatively, we can write the csv results to a file.
 
 
 ```python

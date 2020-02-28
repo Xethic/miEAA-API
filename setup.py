@@ -16,7 +16,7 @@ setup(
     author='Jeffrey Solomon',
     maintainer='Chair for Clinical Bioinformatics at Saarland University',
     maintainer_email='ccb.unisb@gmail.com',
-    url='https://ccb-compute2.cs.uni-saarland.de/mieaa_tool/',
+    url='https://www.ccb.uni-saarland.de/mieaa_tool',
     download_url='https://pypi.org/project/mieaa/#files',
     project_urls={
         "Bug Tracker": "https://github.com/Xethic/miEAA-API/issues",

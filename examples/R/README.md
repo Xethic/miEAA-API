@@ -1,16 +1,15 @@
 # miEAA API Wrapper Usage
-The [reticulate](https://github.com/rstudio/reticulate) library allows us to utilize the wrapper in R, assuming Python is also installed.
+The [reticulate](https://github.com/rstudio/reticulate) library allows us to utilize the wrapper class in R, assuming Python is also installed.
 
 A barebones example script can be found [here](./example_script.R).
 
 ```R
 library(reticulate)
-py = import_builtins()
 api_wrapper = import("mieaa")
 mieaa_api = api_wrapper$API()
 ```
 
-Target sets, Categories, and reference sets support strings, iterables, and file objects.
+Target sets, categories, and reference sets support strings, iterables, and file objects.
 
 Mixed delimiters should still function, but are not recommended.
 
@@ -80,6 +79,8 @@ precursors
 
 
 ```R
+py = import_builtins()  # part of 'reticulate'
+
 # Files need to be python file objects
 with(py$open("precursors.txt", 'r') %as% prec_file, {
     mirnas = mieaa_api$convert_precursor_to_mirna(prec_file, output_format='tabsep')
@@ -117,7 +118,7 @@ mirnas
 Run Gene Set Enrichment Analysis (GSEA) or Over-representation Analysis (ORA).  
 Please refer to documentation for possible keyword arguments.
 
-For ORA, if `reference_set` is not specified or is left empty, default to using miEAA reference sets for specified categories. 
+For ORA, if `reference_set` is not specified or is left empty, default to using miEAA reference sets for specified categories.
 
 
 ```R
@@ -140,15 +141,14 @@ mieaa_api$get_progress()
 
 
 ### Retrieving Enrichment Results
-Get results after enrichment analysis has been completed.  
-Determine how often to check progress via `check_progress_interval` (default is 5 seconds)
+Get results after enrichment analysis has been completed, determining how often to check progress via `check_progress_interval` (default is 5 seconds).
 
 
 ```R
 json = mieaa_api$get_results(check_progress_interval=5)
 ```
 
-The returned data is easily usable with dataframes
+The returned data can be easily turned into a dataframe.
 
 
 ```R
@@ -176,7 +176,7 @@ head(df)
 
 
 
-Results can also be obtained as a csv string
+Results can also be obtained as a csv string.
 
 
 ```R
@@ -192,7 +192,7 @@ Results can be automatically saved to a json or csv (default) file.
 file_contents = mieaa_api$save_enrichment_results('./results.csv')
 ```
 
-Alternatively, we can write the csv results to a file
+Alternatively, we can write the csv results to a file.
 
 
 ```R
