@@ -1,10 +1,24 @@
 # miEAA CLI and API Wrapper
 
-The miRNA Enrichment Analysis and Annotation Tool (miEAA) facilitates the functional analysis of sets of miRNAs.
+The miRNA Enrichment Analysis and Annotation Tool (miEAA) facilitates the functional analysis of sets of miRNAs.  
 This package provides a command line interface and wrapper for the miEAA API.
 
-To learn more about miEAA or to utilize our online interface, please visit our [web server](https://ccb-compute2.cs.uni-saarland.de/mieaa_tool/)
-All miEAA tools are provided and hosted by the [Chair for Clinical Bioinformatics at Saarland University](https://www.ccb.uni-saarland.de/
+To learn more about miEAA or to utilize our online interface, please visit our [web server](https://ccb-compute2.cs.uni-saarland.de/mieaa_tool/).  
+All miEAA tools are provided and hosted by the [Chair for Clinical Bioinformatics at Saarland University](https://www.ccb.uni-saarland.de/).
+
+This package allows users to execute miEAA directly from the command line:
+
+```
+$ mieaa -h
+```
+
+An API wrapper is also provided for scripting purposes:
+
+```Python
+from mieaa import API
+
+mieaa_api = API()
+```
 
 ## Installation
 
@@ -23,22 +37,11 @@ $ pip install mieaa
 $ conda install -c ccb-sb mieaa
 ```
 
-Users can utilize miEAA directly from the command line:
-```
-$ mieaa -h
-```
-
-An API wrapper is also provided
-```
-from mieaa import API
-
-mieaa_api = API()
-```
-
 ## Examples
 
-For example usage, see the [example Python script](https://github.com/Xethic/miEAA-API/examples/Python/).  
-Using the [reticulate](https://github.com/rstudio/reticulate) library, users can utilize our package in R (Python installation is still required). As such, an [example R script](https://github.com/Xethic/miEAA-API/examples/R/) is also provided.
+For example usage, see the [example Python script](https://github.com/Xethic/miEAA-API/tree/master/examples/Python/).  
+Using the [reticulate](https://github.com/rstudio/reticulate) library, users can utilize our package in R (Python installation is still required). As such, an [example R script](https://github.com/Xethic/miEAA-API/tree/master/examples/R/) is also provided.
+
 
 ## Command Line Interface
 
@@ -151,7 +154,7 @@ mieaa_api = API()
 mieaa_api.convert_mirbase_version(mirnas, from_version, to_version, input_type, to_file='', output_format='oneline')
 ```
 
-##### Parameters
+*parameters*
 
 * `mirnas` - str, list-like, or file-object
   * set of either mature miRNAs or precursors we want to convert
@@ -167,7 +170,7 @@ mieaa_api.convert_mirbase_version(mirnas, from_version, to_version, input_type, 
   * 'oneline': Text containing only converted miRNAs/precursors
   * 'tabsep': Tab-separated input and output miRNAs/precursors
 
-##### Returns
+*return*
 
   `list` - converted miRNAs/precursors
 
@@ -177,7 +180,7 @@ mieaa_api.convert_mirbase_version(mirnas, from_version, to_version, input_type, 
 mieaa_api.convert_mirna_to_precursor(mirnas,  to_file='', output_format='oneline', conversion_type='all')
 ```
 
-##### Parameters
+*parameters*
 
 * `mirnas` - str, list-like, or file-object
   * set of either mature miRNAs or precursors we want to convert
@@ -190,7 +193,7 @@ mieaa_api.convert_mirna_to_precursor(mirnas,  to_file='', output_format='oneline
   * 'all': Output all newly converted precursors
   * 'unique': Only output precursors with unique mappings
 
-##### Returns
+*return*
 
   `list` - newly converted precursors
 
@@ -200,7 +203,7 @@ mieaa_api.convert_mirna_to_precursor(mirnas,  to_file='', output_format='oneline
 mieaa_api.convert_precursor_to_mirna(mirnas,  to_file='', output_format='oneline', conversion_type='all')
 ```
 
-##### Parameters
+*parameters*
 
 * `mirnas` - str, list-like, or file-object
   * set of either mature miRNAs or precursors we want to convert
@@ -213,7 +216,7 @@ mieaa_api.convert_precursor_to_mirna(mirnas,  to_file='', output_format='oneline
   * 'all': Output all newly converted miRNAs
   * 'unique': Only output miRNAs with unique mappings
 
-##### Returns
+*return*
 
   `list` - newly converted miRNAs
 
@@ -223,7 +226,7 @@ mieaa_api.convert_precursor_to_mirna(mirnas,  to_file='', output_format='oneline
 mieaa_api.run_gsea(test_set, categories, input_type, species, p_value_adjustment='fdr', significance_level=0.05, independent_p_adjust=True, threshold_level=2)
 ```
 
-##### Parameters
+*parameters*
 
 * `test_set` - str, list-like, or file-object
   * set of either mature miRNAs or precursors we want to convert
@@ -251,7 +254,7 @@ mieaa_api.run_gsea(test_set, categories, input_type, species, p_value_adjustment
 * `threshold_level` - int
   * Filter out subcategories containing less than this many miRNAs/precursors
 
-##### Returns
+*return*
 
   `requests.Response` - API response
 
@@ -261,7 +264,7 @@ mieaa_api.run_gsea(test_set, categories, input_type, species, p_value_adjustment
 mieaa_api.run_ora(test_set, categories, input_type, species, reference_set='', p_value_adjustment='fdr', significance_level=0.05, independent_p_adjust=True, threshold_level=2)
 ```
 
-##### Parameters
+*parameters*
 
 * `test_set` - str, list-like, or file-object
   * set of either mature miRNAs or precursors we want to convert
@@ -291,17 +294,17 @@ mieaa_api.run_ora(test_set, categories, input_type, species, reference_set='', p
 * `threshold_level` - int
   * Filter out subcategories containing less than this many miRNAs/precursors
 
-##### Returns
+*return*
 
   `requests.Response` - API response
 
-#### get_enrichment_parameters
+#### get_enrichment_Parameters
 
 ```
-mieaa_api.get_enrichment_parameters()
+mieaa_api.get_enrichment_Parameters()
 ```
 
-##### Returns
+*return*
 
   `dict` - Parameters that were provided when calling `run_gsea()` or `run_ora()`
 
@@ -311,14 +314,14 @@ mieaa_api.get_enrichment_parameters()
 mieaa_api.get_results(results_format='json', check_progress_interval=5)
 ```
 
-##### Parameters
+*parameters*
 
 * `results_format` - 'json' or 'csv'
   * Whether to retrieve results as json or as a csv string
 * `check_progress_interval` - float
   * How many seconds to wait in between checking if results have finished computing
 
-##### Returns
+*return*
 
   `list` or `str` containing the results
 
@@ -328,7 +331,7 @@ mieaa_api.get_results(results_format='json', check_progress_interval=5)
 mieaa_api.save_enrichment_results(save_file, file_type='csv', check_progress_interval=5)
 ```
 
-##### Parameters
+*parameters*
 
 * `save_file` - str or file-object
   * Where to save the results
@@ -337,7 +340,7 @@ mieaa_api.save_enrichment_results(save_file, file_type='csv', check_progress_int
 * `check_progress_interval` - float
   * How many seconds to wait in between checking if results have finished computing
 
-##### Returns
+*return*
 
 * `str` - results as they were written to file
 
@@ -348,7 +351,7 @@ Invalidate this instance. Previous results become irretrievable, but can now be 
 mieaa_api.invalidate()
 ```
 
-##### Returns
+*return*
 
 None
 
@@ -358,7 +361,7 @@ None
 mieaa_api.get_enrichment_categories(input_type, species, with_suffix=False)
 ```
 
-##### Parameters
+*parameters*
 
 * `input_type` - 'precursor' or 'mirna'
   * Whether the provided set includes precursors or mature miRNAs
@@ -369,5 +372,5 @@ mieaa_api.get_enrichment_categories(input_type, species, with_suffix=False)
 * `with_suffix` - bool
   * Whether to include '_precursor' or '_mature' suffix in category names
   
-##### Returns
+*return*
   `dict` - keys are the category names, values are a short description

@@ -30,15 +30,22 @@ updated_mirnas = mieaa_api$convert_mirbase_version(initial_mirnas, '16', '22', '
 updated_mirnas
 ```
 
+```R
+[[1]]
+[1] "hsa-miR-374c-5p"
 
-<style>
-.list-inline {list-style: none; margin:0; padding: 0}
-.list-inline>li {display: inline-block}
-.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
-</style>
-<ol class=list-inline><li>'hsa-miR-374c-5p'</li><li>'hsa-miR-642b-3p'</li><li>'hsa-miR-550b-3p'</li><li>'hsa-miR-107'</li><li>'hsa-miR-125b-5p'</li></ol>
+[[2]]
+[1] "hsa-miR-642b-3p"
 
+[[3]]
+[1] "hsa-miR-550b-3p"
 
+[[4]]
+[1] "hsa-miR-107"
+
+[[5]]
+[1] "hsa-miR-125b-5p"
+```
 
 ## Convert between miRNAs <-> precursors
 Results can be optionally saved to a file by specifying the `to_file` argument.    
@@ -52,13 +59,23 @@ precursors
 ```
 
 
-<style>
-.list-inline {list-style: none; margin:0; padding: 0}
-.list-inline>li {display: inline-block}
-.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
-</style>
-<ol class=list-inline><li>'hsa-mir-374c'</li><li>'hsa-mir-642b'</li><li>'hsa-mir-550b-1;hsa-mir-550b-2'</li><li>'hsa-mir-107'</li><li>'hsa-mir-125b-1;hsa-mir-125b-2'</li></ol>
 
+```R
+[[1]]
+[1] "hsa-mir-374c"
+
+[[2]]
+[1] "hsa-mir-642b"
+
+[[3]]
+[1] "hsa-mir-550b-1;hsa-mir-550b-2"
+
+[[4]]
+[1] "hsa-mir-107"
+
+[[5]]
+[1] "hsa-mir-125b-1;hsa-mir-125b-2"
+```
 
 
 
@@ -71,14 +88,28 @@ mirnas
 ```
 
 
-<style>
-.list-inline {list-style: none; margin:0; padding: 0}
-.list-inline>li {display: inline-block}
-.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
-</style>
-<ol class=list-inline><li>'hsa-mir-374c\thsa-miR-374c-5p;hsa-miR-374c-3p'</li><li>'hsa-mir-642b\thsa-miR-642b-5p;hsa-miR-642b-3p'</li><li>'hsa-mir-550b-1\thsa-miR-550b-3p;hsa-miR-550b-2-5p'</li><li>'hsa-mir-550b-2\thsa-miR-550b-3p;hsa-miR-550b-2-5p'</li><li>'hsa-mir-107\thsa-miR-107'</li><li>'hsa-mir-125b-1\thsa-miR-125b-5p;hsa-miR-125b-1-3p'</li><li>'hsa-mir-125b-2\thsa-miR-125b-5p;hsa-miR-125b-2-3p'</li></ol>
+```R
+[[1]]
+[1] "hsa-mir-374c\thsa-miR-374c-5p;hsa-miR-374c-3p"
 
+[[2]]
+[1] "hsa-mir-642b\thsa-miR-642b-5p;hsa-miR-642b-3p"
 
+[[3]]
+[1] "hsa-mir-550b-1\thsa-miR-550b-3p;hsa-miR-550b-2-5p"
+
+[[4]]
+[1] "hsa-mir-550b-2\thsa-miR-550b-3p;hsa-miR-550b-2-5p"
+
+[[5]]
+[1] "hsa-mir-107\thsa-miR-107"
+
+[[6]]
+[1] "hsa-mir-125b-1\thsa-miR-125b-5p;hsa-miR-125b-1-3p"
+
+[[7]]
+[1] "hsa-mir-125b-2\thsa-miR-125b-5p;hsa-miR-125b-2-3p"
+```
 
 ## Enrichment Analysis
 
