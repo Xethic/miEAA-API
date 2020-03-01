@@ -117,7 +117,7 @@ def create_subcommands(subparsers):
     # mirbase converter parser
     version_parser = subparsers.add_parser('convert_mirbase', parents=[converter_parser],
         help='Convert mirBase version')
-    version_parser.add_argument('from_', metavar='from', help='mirBase version to convert miRNAs/precursors from')
+    version_parser.add_argument('from_', metavar='FROM', help='mirBase version to convert miRNAs/precursors from')
     version_parser.add_argument('--to', default=22,
         help='mirBase version to convert miRNAs/precursors from (default=22)')
     version_parser.set_defaults(parser_name='convert_mirbase', call=mirbase_converter)
