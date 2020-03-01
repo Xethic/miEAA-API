@@ -127,10 +127,12 @@ def main():
     # check for mutually exclusive arguments (basically ArgumentParser.add_mutually_exclusive_group)
     # implemented due to inability to combine custom title/descriptions in help flag
     def exclusivity_check(subparser, set_opt, file_opt, flag_letter, required=True):
+        lower_flag = flag_letter.lower()
+        upper_flag = flag_letter.upper()
         if (set_opt and file_opt):
-            err_message = f'argument `-{flag_letter.lower()}` not allowed with argument `-{flag_letter.upper()}` '
+            err_message = 'argument `-{}` not allowed with argument `-{}`'.format(lower_flag, upper_flag)
         elif required and not set_opt and not file_opt:
-            err_message = f'one of the arguments `-{flag_letter.lower()}` or `-{flag_letter.upper()}` is required'
+            err_message = 'one of the arguments `-{}` or `-{}` is required'.format(lower_flag, upper_flag)
         else:
             return
         subparser.print_help()
@@ -142,10 +144,10 @@ def main():
     mieaa_subparsers = mieaa_parser.add_subparsers()
     create_subcommands(mieaa_subparsers)
 
-        args = mieaa_parser.parse_args()
+    args = mieaa_parser.parse_args()
 
     try:
-    selected_parser = mieaa_subparsers.choices[args.parser_name]
+        selected_parser = mieaa_subparsers.choices[args.parser_name]
     except AttributeError:  # parser_name won't be in the Namespace if no subcommand
         mieaa_parser.error('subcommand is required')
 
