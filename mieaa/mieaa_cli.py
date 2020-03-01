@@ -139,16 +139,15 @@ def main():
     # Base parser requiring subcommands
     mieaa_parser = argparse.ArgumentParser(prog='miEAA', description='miEAA Command Line Tool')
     mieaa_parser.add_argument('--version', action='version', version='{} {}'.format(mieaa_parser.prog, __version__))
-    mieaa_subparsers = mieaa_parser.add_subparsers(required=True)
+    mieaa_subparsers = mieaa_parser.add_subparsers()
     create_subcommands(mieaa_subparsers)
 
-    # if no subcommand is specified it throws a TypeError
-    try:
         args = mieaa_parser.parse_args()
-    except TypeError:
-        mieaa_parser.error('subcommand is required')
 
+    try:
     selected_parser = mieaa_subparsers.choices[args.parser_name]
+    except AttributeError:  # parser_name won't be in the Namespace if no subcommand
+        mieaa_parser.error('subcommand is required')
 
     # check mutually exclusive flags
     exclusivity_check(selected_parser, args.mirna_set, args.mirna_set_file, 'm')
