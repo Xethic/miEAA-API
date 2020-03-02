@@ -27,12 +27,13 @@ Dependencies:
 * Python >= 3.5
 * Requests >= 2.19
 
-miEAA can be easily installed via pip or Anaconda:
+#### pip
 
 ```
 $ pip install mieaa
 ```
 
+#### Conda [![Anaconda-Server Badge](https://anaconda.org/conda-forge/skidl/badges/installer/conda.svg)](https://conda.anaconda.org/conda-forge)
 ```
 $ conda install -c ccb-sb mieaa
 ```
