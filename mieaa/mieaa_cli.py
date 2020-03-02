@@ -117,7 +117,7 @@ def create_subcommands(subparsers):
     # mirbase converter parser
     version_parser = subparsers.add_parser('convert_mirbase', parents=[converter_parser],
         help='Convert mirBase version')
-    version_parser.add_argument('from_', metavar='from', help='mirBase version to convert miRNAs/precursors from')
+    version_parser.add_argument('from_', metavar='FROM', help='mirBase version to convert miRNAs/precursors from')
     version_parser.add_argument('--to', default=22,
         help='mirBase version to convert miRNAs/precursors from (default=22)')
     version_parser.set_defaults(parser_name='convert_mirbase', call=mirbase_converter)
@@ -127,10 +127,12 @@ def main():
     # check for mutually exclusive arguments (basically ArgumentParser.add_mutually_exclusive_group)
     # implemented due to inability to combine custom title/descriptions in help flag
     def exclusivity_check(subparser, set_opt, file_opt, flag_letter, required=True):
+        lower_flag = flag_letter.lower()
+        upper_flag = flag_letter.upper()
         if (set_opt and file_opt):
-            err_message = f'argument `-{flag_letter.lower()}` not allowed with argument `-{flag_letter.upper()}` '
+            err_message = 'argument `-{}` not allowed with argument `-{}`'.format(lower_flag, upper_flag)
         elif required and not set_opt and not file_opt:
-            err_message = f'one of the arguments `-{flag_letter.lower()}` or `-{flag_letter.upper()}` is required'
+            err_message = 'one of the arguments `-{}` or `-{}` is required'.format(lower_flag, upper_flag)
         else:
             return
         subparser.print_help()
@@ -139,16 +141,15 @@ def main():
     # Base parser requiring subcommands
     mieaa_parser = argparse.ArgumentParser(prog='miEAA', description='miEAA Command Line Tool')
     mieaa_parser.add_argument('--version', action='version', version='{} {}'.format(mieaa_parser.prog, __version__))
-    mieaa_subparsers = mieaa_parser.add_subparsers(required=True)
+    mieaa_subparsers = mieaa_parser.add_subparsers()
     create_subcommands(mieaa_subparsers)
 
-    # if no subcommand is specified it throws a TypeError
-    try:
-        args = mieaa_parser.parse_args()
-    except TypeError:
-        mieaa_parser.error('subcommand is required')
+    args = mieaa_parser.parse_args()
 
-    selected_parser = mieaa_subparsers.choices[args.parser_name]
+    try:
+        selected_parser = mieaa_subparsers.choices[args.parser_name]
+    except AttributeError:  # parser_name won't be in the Namespace if no subcommand
+        mieaa_parser.error('subcommand is required')
 
     # check mutually exclusive flags
     exclusivity_check(selected_parser, args.mirna_set, args.mirna_set_file, 'm')
