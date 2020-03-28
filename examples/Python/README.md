@@ -42,7 +42,8 @@ updated_mirnas
 ## Convert between miRNAs <-> precursors
 Results can be optionally saved to a file by specifying the `to_file` argument.    
 Some names are not uniquely converted. We can specify conversion type as either `all` (default) or `unique`.  
-We can also decide whether we want our output to only include converted results (default), or tab separated input - output (`tabsep`).
+We can also decide whether we want our output to only include converted results with multiple-mapped values separated by a semicolon (default, `oneline`), 
+on their own individual lines (`newline`), or a tab separated input - output (`tabsep`).
 
 
 ```python
