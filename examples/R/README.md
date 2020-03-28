@@ -1,12 +1,12 @@
-# miEAA API Wrapper Usage
+# miEAA API Usage
 The [reticulate](https://github.com/rstudio/reticulate) library allows us to utilize the wrapper class in R, assuming Python is also installed.
 
 A barebones example script can be found [here](./example_script.R).
 
 ```R
 library(reticulate)
-api_wrapper = import("mieaa")
-mieaa_api = api_wrapper$API()
+mieaa = import("mieaa")
+mieaa_api = mieaa$API()
 ```
 
 Target sets, categories, and reference sets support strings, iterables, and file objects.
@@ -49,7 +49,8 @@ updated_mirnas
 ## Convert between miRNAs <-> precursors
 Results can be optionally saved to a file by specifying the `to_file` argument.    
 Some names are not uniquely converted. We can specify conversion type as either `all` (default) or `unique`.  
-We can also decide whether we want our output to only include converted results (default), or tab separated input - output (`tabsep`).
+We can also decide whether we want our output to only include converted results with multiple-mapped values separated by a semicolon (default, `oneline`), 
+on their own individual lines (`newline`), or a tab separated input - output (`tabsep`).
 
 
 ```R
@@ -152,26 +153,90 @@ The returned data can be easily turned into a dataframe.
 
 
 ```R
-cols = c('category', 'subcategory', 'enrichment', 'p-value', 'q-value', 'expected', 'observed', 'mirnas/precursors')
+cols = c('category', 'subcategory', 'enrichment', 'p-value', 'p-adjusted', 'q-value', 'expected', 'observed', 'mirnas/precursors')
 df = data.frame(matrix(unlist(json), nrow=length(json), byrow=T))
 colnames(df) = cols
 head(df)
 ```
 
 
-<table>
-<caption>A data.frame: 5 × 8</caption>
-<thead>
-	<tr><th></th><th scope=col>category</th><th scope=col>subcategory</th><th scope=col>enrichment</th><th scope=col>p-value</th><th scope=col>q-value</th><th scope=col>expected</th><th scope=col>observed</th><th scope=col>mirnas/precursors</th></tr>
-	<tr><th></th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><th scope=row>1</th><td>Diseases (HMDD)</td><td>Alopecia                   </td><td>over-represented</td><td>0.047812127999999995</td><td>0.0478121</td><td>0.0678879</td><td>2</td><td>hsa-mir-125b-1; hsa-mir-125b-2             </td></tr>
-	<tr><th scope=row>2</th><td>Diseases (HMDD)</td><td>Atopic Dermatitis          </td><td>over-represented</td><td>0.047812127999999995</td><td>0.0478121</td><td>0.075431 </td><td>2</td><td>hsa-mir-125b-1; hsa-mir-125b-2             </td></tr>
-	<tr><th scope=row>3</th><td>Diseases (HMDD)</td><td>Lichen Planus              </td><td>over-represented</td><td>0.047812127999999995</td><td>0.0478121</td><td>0.0678879</td><td>2</td><td>hsa-mir-125b-1; hsa-mir-125b-2             </td></tr>
-	<tr><th scope=row>4</th><td>Diseases (HMDD)</td><td>Myotonic Muscular Dystrophy</td><td>over-represented</td><td>0.03560088          </td><td>0.0356009</td><td>0.196121 </td><td>3</td><td>hsa-mir-107; hsa-mir-125b-1; hsa-mir-125b-2</td></tr>
-	<tr><th scope=row>5</th><td>Diseases (HMDD)</td><td>Nevus                      </td><td>over-represented</td><td>0.016345392         </td><td>0.0163454</td><td>0.0226293</td><td>2</td><td>hsa-mir-125b-1; hsa-mir-125b-2             </td></tr>
-</tbody>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>category</th>
+      <th>subcategory</th>
+      <th>enrichment</th>
+      <th>p-value</th>
+      <th>p-adjusted</th>
+      <th>q-value</th>
+      <th>expected</th>
+      <th>observed</th>
+      <th>mirnas/precursors</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Diseases (HMDD)</td>
+      <td>Alopecia</td>
+      <td>over-represented</td>
+      <td>0.0017138</td>
+      <td>0.0478121</td>
+      <td>0.0478121</td>
+      <td>0.0678879</td>
+      <td>2</td>
+      <td>hsa-mir-125b-1; hsa-mir-125b-2</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Diseases (HMDD)</td>
+      <td>Atopic Dermatitis</td>
+      <td>over-represented</td>
+      <td>0.0021345</td>
+      <td>0.0478121</td>
+      <td>0.0478121</td>
+      <td>0.075431</td>
+      <td>2</td>
+      <td>hsa-mir-125b-1; hsa-mir-125b-2</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Diseases (HMDD)</td>
+      <td>Lichen Planus</td>
+      <td>over-represented</td>
+      <td>0.0017138</td>
+      <td>0.0478121</td>
+      <td>0.0478121</td>
+      <td>0.0678879</td>
+      <td>2</td>
+      <td>hsa-mir-125b-1; hsa-mir-125b-2</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Diseases (HMDD)</td>
+      <td>Myotonic Muscular Dystrophy</td>
+      <td>over-represented</td>
+      <td>6.36e-4</td>
+      <td>0.0356009</td>
+      <td>0.0356009</td>
+      <td>0.196121</td>
+      <td>3</td>
+      <td>hsa-mir-107; hsa-mir-125b-1; hsa-mir-125b-2</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Diseases (HMDD)</td>
+      <td>Nevus</td>
+      <td>over-represented</td>
+      <td>1.46e-4</td>
+      <td>0.0163454</td>
+      <td>0.0163454</td>
+      <td>0.0226293</td>
+      <td>2</td>
+      <td>hsa-mir-125b-1; hsa-mir-125b-2</td>
+    </tr>
+  </tbody>
 </table>
 
 

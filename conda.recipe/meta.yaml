@@ -36,7 +36,7 @@ about:
   license: MIT
   license_family: MIT
   license_file: LICENSE
-  summary: "miEAA command line interface and api wrapper"
+  summary: "miEAA command line interface and api"
   doc_url: https://github.com/Xethic/miEAA-API
   dev_url: https://github.com/Xethic/miEAA-API
 

@@ -1,4 +1,4 @@
-# miEAA API Wrapper Usage
+# miEAA API Usage
 
 A barebones example script can be found [here](./example_script.py).
 
@@ -42,7 +42,8 @@ updated_mirnas
 ## Convert between miRNAs <-> precursors
 Results can be optionally saved to a file by specifying the `to_file` argument.    
 Some names are not uniquely converted. We can specify conversion type as either `all` (default) or `unique`.  
-We can also decide whether we want our output to only include converted results (default), or tab separated input - output (`tabsep`).
+We can also decide whether we want our output to only include converted results with multiple-mapped values separated by a semicolon (default, `oneline`), 
+on their own individual lines (`newline`), or a tab separated input - output (`tabsep`).
 
 
 ```python
@@ -123,7 +124,7 @@ The returned data can be easily turned into a pandas dataframe.
 
 ```python
 import pandas as pd 
-cols = ['category', 'subcategory', 'enrichment', 'p-value', 'q-value', 'expected', 'observed', 'mirnas/precursors']
+cols = ['category', 'subcategory', 'enrichment', 'p-value', 'p-adjusted', 'q-value', 'expected', 'observed', 'mirnas/precursors']
 df = pd.DataFrame(json, columns=cols)
 df.head()
 ```
@@ -139,6 +140,7 @@ df.head()
       <th>subcategory</th>
       <th>enrichment</th>
       <th>p-value</th>
+      <th>p-adjusted</th>
       <th>q-value</th>
       <th>expected</th>
       <th>observed</th>
@@ -151,7 +153,8 @@ df.head()
       <td>Diseases (HMDD)</td>
       <td>Alopecia</td>
       <td>over-represented</td>
-      <td>0.047812127999999995</td>
+      <td>0.0017138</td>
+      <td>0.0478121</td>
       <td>0.0478121</td>
       <td>0.0678879</td>
       <td>2</td>
@@ -162,7 +165,8 @@ df.head()
       <td>Diseases (HMDD)</td>
       <td>Atopic Dermatitis</td>
       <td>over-represented</td>
-      <td>0.047812127999999995</td>
+      <td>0.0021345</td>
+      <td>0.0478121</td>
       <td>0.0478121</td>
       <td>0.075431</td>
       <td>2</td>
@@ -173,7 +177,8 @@ df.head()
       <td>Diseases (HMDD)</td>
       <td>Lichen Planus</td>
       <td>over-represented</td>
-      <td>0.047812127999999995</td>
+      <td>0.0017138</td>
+      <td>0.0478121</td>
       <td>0.0478121</td>
       <td>0.0678879</td>
       <td>2</td>
@@ -184,7 +189,8 @@ df.head()
       <td>Diseases (HMDD)</td>
       <td>Myotonic Muscular Dystrophy</td>
       <td>over-represented</td>
-      <td>0.03560088</td>
+      <td>6.36e-4</td>
+      <td>0.0356009</td>
       <td>0.0356009</td>
       <td>0.196121</td>
       <td>3</td>
@@ -195,7 +201,8 @@ df.head()
       <td>Diseases (HMDD)</td>
       <td>Nevus</td>
       <td>over-represented</td>
-      <td>0.016345392</td>
+      <td>1.46e-4</td>
+      <td>0.0163454</td>
       <td>0.0163454</td>
       <td>0.0226293</td>
       <td>2</td>

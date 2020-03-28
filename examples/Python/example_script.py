@@ -20,7 +20,7 @@ json = mieaa_api.get_results(check_progress_interval=5)
 mieaa_api.save_enrichment_results('./example.csv')
 
 ## Pandas required
-# cols = ['category', 'subcategory', 'enrichment', 'p-value', 'q-value', 'expected', 'observed', 'mirnas/precursors']
+# cols = ['category', 'subcategory', 'enrichment', 'p-value', 'p-adjusted', 'q-value', 'expected', 'observed', 'mirnas/precursors']
 # df = pd.DataFrame(json, columns=cols)
 # df.head()
 

@@ -9,14 +9,14 @@ with open('./mieaa/_version.py') as version_file:
 setup(
     name='mieaa',
     version=__version__,
-    description='miEAA command line interface and api wrapper',
+    description='miEAA command line interface and api',
     long_description=long_description,
     long_description_content_type='text/markdown',
     license='MIT',
     author='Jeffrey Solomon',
     maintainer='Chair for Clinical Bioinformatics at Saarland University',
     maintainer_email='ccb.unisb@gmail.com',
-    url='https://www.ccb.uni-saarland.de/mieaa_tool',
+    url='https://www.ccb.uni-saarland.de/mieaa2',
     download_url='https://pypi.org/project/mieaa/#files',
     project_urls={
         "Bug Tracker": "https://github.com/Xethic/miEAA-API/issues",

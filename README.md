@@ -1,7 +1,7 @@
-# miEAA CLI and API Wrapper
+# miEAA CLI and API
 
 The miRNA Enrichment Analysis and Annotation Tool (miEAA) facilitates the functional analysis of sets of miRNAs.  
-This package provides a command line interface and wrapper for the miEAA API.
+This package provides a miEAA command line and API interface.
 
 To learn more about miEAA or to utilize our online interface, please visit our [web server](https://www.ccb.uni-saarland.de/mieaa2).  
 All miEAA tools are provided and hosted by the [Chair for Clinical Bioinformatics at Saarland University](https://www.ccb.uni-saarland.de/).
@@ -12,7 +12,7 @@ This package allows users to execute miEAA directly from the command line:
 $ mieaa -h
 ```
 
-An API wrapper is also provided for scripting purposes:
+An API is also provided for scripting purposes:
 
 ```Python
 from mieaa import API
@@ -33,7 +33,8 @@ Dependencies:
 $ pip install mieaa
 ```
 
-#### Conda [![Anaconda-Server Badge](https://anaconda.org/conda-forge/skidl/badges/installer/conda.svg)](https://conda.anaconda.org/conda-forge)
+#### Conda [![Anaconda-Server Badge](https://anaconda.org/conda-forge/skidl/badges/installer/conda.svg)](https://anaconda.org/ccb-sb/mieaa)
+
 ```
 $ conda install -c ccb-sb mieaa
 ```
@@ -41,7 +42,8 @@ $ conda install -c ccb-sb mieaa
 ## Examples
 
 For example usage, see the [example Python script](https://github.com/Xethic/miEAA-API/tree/master/examples/Python/).  
-Using the [reticulate](https://github.com/rstudio/reticulate) library, users can utilize our package in R (Python installation is still required). As such, an [example R script](https://github.com/Xethic/miEAA-API/tree/master/examples/R/) is also provided.
+For R, users can utilize the [reticulate](https://github.com/rstudio/reticulate) library, (Python installation is still required). 
+An [example R script](https://github.com/Xethic/miEAA-API/tree/master/examples/R/) is provided using this method.
 
 
 ## Command Line Interface
@@ -69,9 +71,9 @@ For subcommands where you need to specify precursor or mature, mature is always 
 **Mutually exclusive options**  
 Each subcommand requires either `--mirna-set` (`-m`) or `--mirna-set-file` (`-M`) to be specified. Enrichment analyses also require similarly behaving arguments for categories, and optionally for reference sets in the case of ORA. 
 
-* `miea SUBCOMMAND --mirna-set MIRNA [MIRNA ...]`
-* `miea SUBCOMMAND --mirna-set MIRNAS_STRING`
-* `miea SUBCOMMAND --mirna-set-file MIRNA_FILE`
+* `mieaa SUBCOMMAND --mirna-set MIRNA [MIRNA ...]`
+* `mieaa SUBCOMMAND --mirna-set MIRNAS_STRING`
+* `mieaa SUBCOMMAND --mirna-set-file MIRNA_FILE`
 
 ### Converting miRNA -> precursor
 
@@ -132,7 +134,7 @@ $ mieaa ora mmu -M mirnas.txt -C categories.txt --adjustment none
 $ mieaa ora rno -M mirnas.txt -C categories.txt -a bonferonni --json -o results.json
 ```
 
-## API Wrapper
+## API
 
 The miEAA API can be easily utilized via the `API` class.
 

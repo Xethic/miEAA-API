@@ -1,7 +1,7 @@
 library(reticulate)
 py = import_builtins()
-api_wrapper = import("mieaa")
-mieaa_api = api_wrapper$API()
+mieaa = import("mieaa")
+mieaa_api = mieaa$API()
 
 initial_mirnas = 'hsa-miR-374c hsa-miR-642b,hsa-miR-550b;hsa-miR-107;hsa-miR-125b'
 
@@ -17,7 +17,7 @@ print(mieaa_api$get_progress())
 
 json = mieaa_api$get_results(check_progress_interval=5)
 
-cols = c('category', 'subcategory', 'enrichment', 'p-value', 'q-value', 'expected', 'observed', 'mirnas/precursors')
+cols = c('category', 'subcategory', 'enrichment', 'p-value', 'p-adjusted', 'q-value', 'expected', 'observed', 'mirnas/precursors')
 df = data.frame(matrix(unlist(json), nrow=length(json), byrow=T))
 colnames(df) = cols
 
