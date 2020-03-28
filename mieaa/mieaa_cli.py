@@ -10,8 +10,10 @@ def type_converter(mieaa, args):
 
 def mirbase_converter(mieaa, args):
     mirnas = args.mirna_set_file if args.mirna_set_file else args.mirna_set
+    # oneline and newline behave identically in mirbase converter
+    formatting = 'oneline' if args.out_format == 'newline' else args.out_format
     return mieaa.convert_mirbase_version(mirnas, args.from_, args.to, args.mirna_type, args.outfile,
-                                         output_format=args.out_format)
+                                         output_format=formatting)
 
 
 def enrichment_analsis(mieaa, args):
@@ -57,8 +59,11 @@ def create_subcommands(subparsers):
 
     # Abstract Converter applicable to all converters
     converter_parser = argparse.ArgumentParser(add_help=False, parents=[abstract_parser])
-    converter_parser.add_argument('-t', '--tabsep', action='store_const', const='tabsep', dest='out_format',
-        default='oneline', help='Tab-separated `original:converted` ids (Instead of just converted ids')
+    converter_format_group = converter_parser.add_mutually_exclusive_group()
+    converter_format_group.add_argument('-t', '--tabsep', action='store_const', const='tabsep', dest='out_format',
+        default='oneline', help='Tab-separated `original    converted` ids (Instead of just converted ids')
+    converter_format_group.add_argument('-n', '--newline', action='store_const', const='newline', dest='out_format',
+        default='oneline', help='Multi-mapped ids on individual lines (Instead of semicolon-separated')
 
     # Abstract Type Converter Parser (`to_precursors` and `to_mirnas`)
     convert_type_parser = argparse.ArgumentParser(add_help=False, parents=[converter_parser])
