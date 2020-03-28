@@ -231,7 +231,7 @@ class API:
         """
         return self.convert_mirna_type(mirnas, 'to_precursor', to_file, **kwargs)
 
-    def start_analysis(self, analysis_type: str, test_set: Union[str, Iterable, IO],
+    def _start_analysis(self, analysis_type: str, test_set: Union[str, Iterable, IO],
                        categories: Union[str, Iterable, IOBase], mirna_type: str, species: str,
                        reference_set: Union[str, Iterable, IOBase]='', **kwargs) -> requests.Response:
         """ Start Enrichment Analysis
@@ -420,7 +420,7 @@ class API:
         """
         return self.start_analysis('GSEA',  test_set, categories, mirna_type, species, '', **kwargs)
 
-    def get_progress_response(self):
+    def _get_progress_response(self):
         if not self.job_id:
             raise RuntimeError('No enrichment analysis has been initiated.')
         url = self._get_endpoint('status', job_id=self.job_id)
