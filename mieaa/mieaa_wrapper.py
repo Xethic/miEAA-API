@@ -44,20 +44,20 @@ class API:
     ----------------
     root_url: str
         API root url
-    api_version:
-        current api version
-    endpoints:
+    api_version : str
+        Current API version
+    endpoints : dict
         API endpoints suffix
     wait_between_requests: float
         How many seconds to wait between API requests (due to throttling)
-    default: dict
-        default settings to pass to converter or analysis apis
+    default : dict
+        Default settings to pass to converter or analysis apis
 
     Instance Attributes
     -------------------
-    session: API_Session
+    session : API_Session
         Session information necessary to retrieve results
-    job_id: uuid
+    job_id : uuid
         Unique identifier for enrichment analysis job of current session
     """
     root_url = "https://anathema.cs.uni-saarland.de/mieaa_tool/api/"
@@ -105,29 +105,29 @@ class API:
                                 mirna_type: str, to_file: Union[str, IO]='', **default_overrides) -> List[str]:
         """ Convert a set of either miRNAs/precursors from one miRbase version to another
 
-        params
-        ------
-        mirnas: str or iterable
+        Parameters
+        -----------
+        mirnas : str or iterable
             Iterable or delimited string of mirnas, e.g. 'hsa-miR-199a-5p,hsa-mir-550b-1;'
-        from_version: float
+        from_version : float
             MiRbase version to convert `mirnas` from.
-        to_version: float
+        to_version : float
             MiRbase version to update `mirnas` to.
-        mirna_type: str
+        mirna_type : str
             `precursor` - Precursor to a mature miRNA, e.g. hsa-mir-550b-1
             `mirna` - Mature miRNA, e.g. hsa-miR-199a-5p
             Mixed input is not currently supported.
-        to_file: str or file-type (optional)
+        to_file : str or file-type (optional)
             if non-empy, save results to provided file name/path
 
         default_overrides kwargs (optional)
-        -----------------
-        output_format: str, default='oneline'
+        -----------------------------------
+        output_format : str, default='oneline'
             `oneline` - Text containing only converted ids
             `tabsep` - Tab-separated input and output id
 
-        return
-        ------
+        Returns
+        -------
             List of converted mirnas.
         """
         if isinstance(mirnas, IOBase):
@@ -143,31 +143,32 @@ class API:
 
         return self._convert('mirbase_converter', base_payload, to_file, default_overrides)
 
-    def convert_mirna_type(self, mirnas: Union[str, Iterable[str], IO], conversion: str,
+    def _convert_mirna_type(self, mirnas: Union[str, Iterable[str], IO], conversion: str,
                            to_file: Union[str, IO]='', **default_overrides) -> List[str]:
-        """ Convert from precursor->mirna or mirna->precursor
+        """ Convert from precursor->mirna or mirna-> precursor
 
-        params
-        ------
-        mirnas: str or iterable
+        Parameters
+        -----------
+        mirnas : str or iterable
             Iterable or delimited string of mirnas, e.g. 'hsa-miR-199a-5p,hsa-mir-550b-1'
-        conversion: str
+        conversion : str
             `to_mirna` - Convert precursors to mirnas
             `to_precursor` - Convert mirna to precursors
-        to_file: str (optional)
-            if non-empy, save results to provided file name/path
+        to_file : str (optional)
+            if non-empty, save results to provided file name/path
 
         default_overrides kwargs (optional)
-        -----------------
-        output_format: str, default='oneline'
-            `oneline` - Text containing only converted ids
+        -----------------------------------
+        output_format : str, default='oneline'
+            `oneline` - Text containing only converted ids, multi-mapped are semicolon separated
+            `newline` - Text containing only converted ids, multi-mapped are newline separated
             `tabsep` - Tab-separated input and output id
-        conversion_type: str, default='all'
+        conversion_type : str, default='all'
             `all` - Output all mappings
             `unique` - Only output unique mappings
 
-        return
-        ------
+        Returns
+        -------
             List of converted mirnas.
         """
         if isinstance(mirnas, IOBase):
@@ -183,10 +184,56 @@ class API:
 
     def convert_precursor_to_mirna(self, mirnas: Union[str, Iterable[str], IO],
                                    to_file: Union[str, IO]='', **default_overrides) -> List[str]:
+        """ Convert from precursor->mirna
+
+        Parameters
+        -----------
+        mirnas : str or iterable
+            Iterable or delimited string of mirnas, e.g. 'hsa-miR-199a-5p,hsa-mir-550b-1'
+        to_file : str (optional)
+            if non-empty, save results to provided file name/path
+
+        default_overrides kwargs (optional)
+        -----------------------------------
+        output_format : str, default='oneline'
+            `oneline` - Text containing only converted ids, multi-mapped are semicolon separated
+            `newline` - Text containing only converted ids, multi-mapped are newline separated
+            `tabsep` - Tab-separated input and output id
+        conversion_type : str, default='all'
+            `all` - Output all mappings
+            `unique` - Only output unique mappings
+
+        Returns
+        -------
+            List of converted mirnas.
+        """
         return self.convert_mirna_type(mirnas, 'to_mirna', to_file, **default_overrides)
 
     def convert_mirna_to_precursor(self, mirnas: Union[str, Iterable[str], IO],
                                    to_file: Union[str, IO]='', **default_overrides) -> List[str]:
+        """ Convert from mirna->precursor
+
+        Parameters
+        -----------
+        mirnas : str or iterable
+            Iterable or delimited string of mirnas, e.g. 'hsa-miR-199a-5p,hsa-mir-550b-1'
+        to_file : str (optional)
+            if non-empty, save results to provided file name/path
+
+        default_overrides kwargs (optional)
+        -----------------------------------
+        output_format : str, default='oneline'
+            `oneline` - Text containing only converted ids, multi-mapped are semicolon separated
+            `newline` - Text containing only converted ids, multi-mapped are newline separated
+            `tabsep` - Tab-separated input and output id
+        conversion_type : str, default='all'
+            `all` - Output all mappings
+            `unique` - Only output unique mappings
+
+        Returns
+        -------
+            List of converted mirnas.
+        """
         return self.convert_mirna_type(mirnas, 'to_precursor', to_file, **default_overrides)
 
     def start_analysis(self, analysis_type: str, test_set: Union[str, Iterable, IO],
@@ -194,28 +241,28 @@ class API:
                        reference_set: Union[str, Iterable, IOBase]='', **default_overrides) -> requests.Response:
         """ Convert a set of either miRNAs/precursors from one miRbase version to another
 
-        params
-        ------
-        analysis_type: str
+        Parameters
+        -----------
+        analysis_type : str
             `ORA` - Over-representation Analysis
             `GSEA` - miRNA enrichment analysis
-        test_set: str, iterable or file-like
+        test_set : str, iterable or file-like
             set of mirnas/precursors we want to test
-        categories: str, iterable or file-like
+        categories : str, iterable or file-like
             Categories we want to run analysis on
-        mirna_type: str
+        mirna_type : str
             `precursor` - Precursor to a mature miRNA, e.g. hsa-mir-550b-1
             `mirna` - Mature miRNA, e.g. hsa-miR-199a-5p
-        species: str
+        species : str
             `hsa` - Homo sapiens
             `mmu` - Mus musculus
             `rno` - Rattus norvegicus
-        reference_set: (optional, default='')
+        reference_set : (optional, default='')
             ORA specific, background reference set of mirnas/precursors
 
         default_overrides kwargs (optional)
-        -----------------
-        p_value_adjustment: str, default='fdr'
+        -----------------------------------
+        p_value_adjustment : str, default='fdr'
             `none` - No adjustment
             `fdr` - FDR (Benjamini-Hochberg) adjustment
             `bonferroni` - Bonferroni adjustment
@@ -223,16 +270,16 @@ class API:
             `hochberg` - Hochberg adjustment
             `holm` - Holm adjustment
             `hommel` - Hommel adjustment
-        independent_p_adjust: bool, default=True
+        independent_p_adjust : bool, default=True
             `True` - Adjust p-values for each category independently
             `False` - Adjust p-values for all categories collectively
-        significance_level: float, default=0.05
+        significance_level : float, default=0.05
             Filter out p-values above significance level
-        threshold_level: int, default=2
+        threshold_level : int, default=2
             Filter out subcategories that contain less than this many mirnas
 
-        return
-        ------
+        Returns
+        -------
             Response
         """
         def format_categories(categories, mirna_type, species):
@@ -312,13 +359,17 @@ class API:
     def get_results(self, results_format: str='json', check_progress_interval: float=5.) -> Union[str, list]:
         """ Return results in json or csv format
 
-        params
-        ------
+        Parameters
+        -----------
         results_format: str (default='json')
             `json` - retrieve results in json format
             `csv` - retrieve results in csv format
         check_progress_interval: float
             How many seconds to wait between checking if results have been computed
+
+        Returns
+        -------
+            Response
         """
         if not self.job_id:
             raise RuntimeError('No enrichment analysis has been initiaited.')
@@ -347,21 +398,21 @@ class API:
     def get_enrichment_categories(self, mirna_type: str, species: str, with_suffix=False) -> dict:
         """ Get possible enrichment categories
 
-        params
-        ------
-        mirna_type: str
+        Parameters
+        -----------
+        mirna_type : str
             `precursor` - Precursor to a mature miRNA, e.g. hsa-mir-550b-1
             `mirna` - Mature miRNA, e.g. hsa-miR-199a-5p
-        species: str
+        species : str
             `hsa` - Homo sapiens
             `mmu` - Mus musculus
             `rno` - Rattus norvegicus
-        with_suffix: bool (default=False)
+        with_suffix : bool (default=False)
             whether to include '_precursor' or '_mature' at end of category name
 
-        return
-        ------
-        dict where keys are categories and values are descriptions
+        Returns
+        -------
+            dict where keys are categories and values are descriptions
         """
         url = self._get_endpoint('categories', species=species.lower(), mirna=mirna_type.lower())
         response = self.session.wait_get(url, wait=self.wait_between_requests)
@@ -378,13 +429,13 @@ class API:
                                 check_progress_interval: float=5.) -> str:
         """ Save results in specified format
 
-        parameters
+        Parameters
         ----------
-        save_file: str or file-like
+        save_file : str or file-like
             File to save results in
-        file_type: str, (default='csv')
+        file_type : str, (default='csv')
             Type of file to write results to. Options are `json` or `csv`
-        check_progress_interval: float, (default=5)
+        check_progress_interval : float, (default=5)
             How many seconds to wait between checking if results have been computed
         """
         results = str(self.get_results(file_type, check_progress_interval))
