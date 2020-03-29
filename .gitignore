@@ -1,6 +1,5 @@
 # User defined
 *.csv
-*.txt
 *.json
 
 ## Python
