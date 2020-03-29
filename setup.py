@@ -9,7 +9,7 @@ with open('./mieaa/_version.py') as version_file:
 setup(
     name='mieaa',
     version=__version__,
-    description='miEAA command line interface and api',
+    description='miEAA Command Line Interface and API',
     long_description=long_description,
     long_description_content_type='text/markdown',
     license='MIT',
@@ -19,8 +19,8 @@ setup(
     url='https://www.ccb.uni-saarland.de/mieaa2',
     download_url='https://pypi.org/project/mieaa/#files',
     project_urls={
-        "Bug Tracker": "https://github.com/Xethic/miEAA-API/issues",
-        "Documentation": 'https://github.com/Xethic/miEAA-API',
+        "Bug Tracker": 'https://github.com/Xethic/miEAA-API/issues',
+        "Documentation": 'https://mieaa.readthedocs.io/en/latest/',
         "Source Code": 'https://github.com/Xethic/miEAA-API',
     },
     classifiers=[

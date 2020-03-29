@@ -32,12 +32,12 @@ test:
     - mieaa --help
 
 about:
-  home: "https://www.ccb.uni-saarland.de/mieaa_tool"
+  home: "https://www.ccb.uni-saarland.de/mieaa2'"
   license: MIT
   license_family: MIT
   license_file: LICENSE
-  summary: "miEAA command line interface and api"
-  doc_url: https://github.com/Xethic/miEAA-API
+  summary: "miEAA Command Line Interface and API"
+  doc_url: https://mieaa.readthedocs.io/en/latest/
   dev_url: https://github.com/Xethic/miEAA-API
 
 extra:
