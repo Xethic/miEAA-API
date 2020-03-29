@@ -25,7 +25,7 @@ Each subcommand requires either `--mirna-set` (`-m`) or `--mirna-set-file` (`-M`
 
 Convert miRNA -> precursor
 
-* `mieaa to_precursor [-m | -M] -FLAGS`
+* `mieaa to_precursor [-m | -M] [OPTIONS]`
 
 ```
 $ mieaa to_precursor -m hsa-miR-20b-5p hsa-miR-144-5p --tabsep --unique
@@ -37,7 +37,7 @@ $ mieaa to_precursor -M mirnas.txt --outfile precursors.txt
 
 Converting between precursor -> miRNA
 
-* `mieaa to_mirna [-m | -M] -FLAGS`
+* `mieaa to_mirna [-m | -M] [OPTIONS]`
 
 ```
 $ mieaa to_mirna -m hsa-mir-20b hsa-mir-144 --tabsep --unique
@@ -49,7 +49,7 @@ $ mieaa to_mirna -M precursors.txt --outfile mirnas.txt
 
 Converting miRBase version
 
-* `mieaa convert_mirbase FROM_VERSION [-m | -M] -FLAGS`
+* `mieaa convert_mirbase FROM_VERSION [-m | -M] [OPTIONS]`
 
 ```
 $ mieaa convert_mirbase 16 -m hsa-miR-642b,hsa-miR-550b
@@ -61,7 +61,7 @@ $ mieaa convert_mirbase 16  -M version_16.txt -o version_22.txt
 
 Gene Set Enrichment Analysis (GSEA)
 
-* `mieaa gsea SPECIES [-m | -M] [-c | -C] -FLAGS`
+* `mieaa gsea SPECIES [-m | -M] [-c | -C] [OPTIONS]`
 
 Species can be specified as `hsa`, `mmu`, or `rno`.
 The category flags (`-c -C`) behave identically to the miRNA set flags (`-m -M`).
@@ -77,7 +77,7 @@ $ mieaa gsea rno -M mirnas.txt -C categories.txt -a bonferonni --json -o results
 
 Over-representation Analysis (ORA)
 
-* `mieaa ora SPECIES [-m | -M] [-c | -C] -FLAGS`
+* `mieaa ora SPECIES [-m | -M] [-c | -C] [OPTIONS]`
 
 Species can be specified as `hsa`, `mmu`, or `rno`.
 The category flags (`-c -C`)  and reference set flags (`-r -R`) behave identically to the miRNA set flags (`-m -M`).

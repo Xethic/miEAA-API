@@ -15,15 +15,16 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../'))
 
+with open('../mieaa/_version.py') as version_file:
+    exec(version_file.read().strip())
 
 # -- Project information -----------------------------------------------------
 
 project = 'miEAA'
 copyright = '2020, Jeff Solomon'
 author = 'Jeff Solomon'
-
-# The full version, including alpha/beta/rc tags
-release = '0.1.2'
+version = __version__
+release = __version__
 master_doc = 'index'
 
 # -- General configuration ---------------------------------------------------
