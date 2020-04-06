@@ -65,7 +65,7 @@ def create_subcommands(subparsers):
     output_style_group.add_argument('--tabsep', action='store_const', const='tabsep', dest='out_format',
         default='oneline', help='Output style: Tab-separated `original\tconverted` ids')
 
-    # Abstract Type Converter Parser (`to_precursors` and `precursor_to_mirnas`)
+    # Abstract Type Converter Parser (`to_precursors` and `to_mirnas`)
     convert_type_parser = argparse.ArgumentParser(add_help=False, parents=[converter_parser])
     convert_type_parser.add_argument('-u', '--unique', action='store_const', const='unique', dest='conv_type',
         default='all', help='Only output ids that map uniquely')
@@ -116,9 +116,9 @@ def create_subcommands(subparsers):
     to_prec_parser.set_defaults(parser_name='to_precursor', call=type_converter)
 
     # precursor->miRNA
-    precursor_to_mirna_parser = subparsers.add_parser('precursor_to_mirna', parents=[convert_type_parser],
+    to_mirna_parser = subparsers.add_parser('to_mirna', parents=[convert_type_parser],
         help='Convert precursors to miRNAs')
-    precursor_to_mirna_parser.set_defaults(parser_name='precursor_to_mirna', call=type_converter)
+    to_mirna_parser.set_defaults(parser_name='to_mirna', call=type_converter)
 
     # mirbase converter parser
     version_parser = subparsers.add_parser('convert_mirbase', parents=[converter_parser],

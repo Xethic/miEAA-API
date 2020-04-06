@@ -43,16 +43,16 @@ $ mieaa to_precursor -m 'hsa-miR-20b-5p,hsa-miR-144-5p' --newline -o precursors.
 $ mieaa to_precursor -M mirnas.txt --outfile precursors.txt
 ```
 
-### precursor_to_mirna
+### to_mirna
 
 Converting between precursor -> miRNA
 
-* `mieaa precursor_to_mirna [-m | -M] [OPTIONS]`
+* `mieaa to_mirna [-m | -M] [OPTIONS]`
 
 ```
-$ mieaa precursor_to_mirna -m hsa-mir-20b hsa-mir-144 --tabsep --unique
-$ mieaa precursor_to_mirna -m 'hsa-mir-20b,hsa-mir-144' --newline -o mirnas.txt
-$ mieaa precursor_to_mirna -M precursors.txt --outfile mirnas.txt
+$ mieaa to_mirna -m hsa-mir-20b hsa-mir-144 --tabsep --unique
+$ mieaa to_mirna -m 'hsa-mir-20b,hsa-mir-144' --newline -o mirnas.txt
+$ mieaa to_mirna -M precursors.txt --outfile mirnas.txt
 ```
 
 ### convert_mirbase

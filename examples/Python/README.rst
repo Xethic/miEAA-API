@@ -66,7 +66,7 @@ a tab separated input - output (``tabsep``).
 .. code:: python
 
     with open('./precursors.txt') as prec_file:
-        mirnas = mieaa_api.convert_precursor_precursor_to_mirna(prec_file, output_format='tabsep')
+        mirnas = mieaa_api.to_mirna(prec_file, output_format='tabsep')
     mirnas
 
 ::

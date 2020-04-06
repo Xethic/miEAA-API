@@ -95,7 +95,7 @@ a tab separated input - output (``tabsep``).
 
     # Files need to be python file objects
     with(py$open("precursors.txt", 'r') %as% prec_file, {
-        mirnas = mieaa_api$convert_precursor_precursor_to_mirna(prec_file, output_format='tabsep')
+        mirnas = mieaa_api$to_mirna(prec_file, output_format='tabsep')
     })
     mirnas
 

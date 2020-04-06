@@ -152,7 +152,7 @@ class API:
         mirnas : str or iterable
             Iterable or delimited string of miRNAs, e.g. 'hsa-miR-199a-5p,hsa-mir-550b-1'
         conversion : str
-            * *precursor_to_mirna* - Convert precursors to miRNAs
+            * *to_mirna* - Convert precursors to miRNAs
             * *to_precursor* - Convert mirna to precursors
         to_file : str, optional
             if non-empty, save results to provided file name/path
@@ -181,7 +181,7 @@ class API:
 
         return self._convert('mirna_type_converter', base_payload, to_file, kwargs)
 
-    def convert_precursor_precursor_to_mirna(self, mirnas: Union[str, Iterable[str], IO],
+    def to_mirna(self, mirnas: Union[str, Iterable[str], IO],
                                    to_file: Union[str, IO]='', **kwargs) -> List[str]:
         """ Convert from precursor->mirna
 
@@ -205,7 +205,7 @@ class API:
         list
             Converted miRNAs
         """
-        return self._convert_mirna_type(mirnas, 'precursor_to_mirna', to_file, **kwargs)
+        return self._convert_mirna_type(mirnas, 'to_mirna', to_file, **kwargs)
 
     def to_precursor(self, mirnas: Union[str, Iterable[str], IO],
                                    to_file: Union[str, IO]='', **kwargs) -> List[str]:

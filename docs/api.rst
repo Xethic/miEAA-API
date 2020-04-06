@@ -12,7 +12,7 @@ mieaa
    API
    API.convert_mirbase
    API.to_precursor
-   API.convert_precursor_precursor_to_mirna
+   API.to_mirna
    API.get_enrichment_categories
    API.get_enrichment_parameters
    API.get_progress
