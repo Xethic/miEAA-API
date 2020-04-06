@@ -60,7 +60,6 @@ class API:
     """
 
     root_url = "https://anathema.cs.uni-saarland.de/mieaa_tool/api/"
-    # root_url = "http://localhost:8000/api/"
     api_version = 'v1'
     wait_between_requests = 1
 
