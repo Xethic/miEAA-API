@@ -6,7 +6,6 @@ Help and options for all subcommands can be view with `mieaa SUBCOMMAND -h`
 *Commands may require specifying whether the input is from a list of strings or a file (see `-m/M in Mutually exclusive options, below`).  
 In such cases, the the lowercase flag letter specifies a string/list, and uppercase specifies a file.*
 
-
 **Supported Species**  
   * *hsa* - Homo sapiens
   * *mmu* - Mus musculus

@@ -1,11 +1,15 @@
 Python API
-==========
+================
+
+mieaa
+*****
 
 .. currentmodule:: mieaa
 
 .. autosummary::
    :toctree: _stubs
 
+   API
    API.convert_mirbase_version
    API.convert_mirna_to_precursor
    API.convert_precursor_to_mirna
@@ -17,3 +21,17 @@ Python API
    API.run_gsea
    API.run_ora
    API.save_enrichment_results
+
+Examples
+********
+.. _examples:
+
+Python
+######
+
+.. include:: ../examples/Python/README.rst
+
+R
+#
+
+.. include:: ../examples/R/README.rst

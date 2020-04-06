@@ -8,6 +8,5 @@ Complete examples for both Python and R (using `reticulate <https://github.com/r
    install
    api
    cli
-   examples
    links
    license
