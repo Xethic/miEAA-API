@@ -3,11 +3,21 @@
 Commands can be invoked via the command line using `mieaa SUBCOMMAND`.  
 Help and options for all subcommands can be view with `mieaa SUBCOMMAND -h`
 
-Commands may require specifying if input is from a list of strings or a file (see `-m/M in Mutually exclusive options, below`).  
-In such cases, the flag letter is identical, with lowercase specifying string/list, and uppercase specifying a file.
+*Commands may require specifying whether the input is from a list of strings or a file (see `-m/M in Mutually exclusive options, below`).  
+In such cases, the the lowercase flag letter specifies a string/list, and uppercase specifies a file.*
 
 
-## Important Notes
+**Supported Species**  
+  * *hsa* - Homo sapiens
+  * *mmu* - Mus musculus
+  * *rno* - Rattus norvegicus
+  * *ath* - Arabidopsis thaliana
+  * *bta* - Bos taurus
+  * *cel* - Caenorhabditis elegans
+  * *dme* - Drosophila melanogaster
+  * *dre* - Danio rerio
+  * *gga* - Gallus gallus
+  * *ssc* - Sus scrofa
 
 **Specifying precursors**  
 For subcommands where you need to specify precursor or mature, mature is always assumed unless the `--precursor` (`-p`) flag is set.
@@ -64,7 +74,7 @@ Gene Set Enrichment Analysis (GSEA)
 
 * `mieaa gsea SPECIES [-m | -M] [-c | -C] [OPTIONS]`
 
-Species can be specified as `hsa`, `mmu`, or `rno`.
+Species must be specified using their three letter identifier, e.g. `hsa`, `mmu`, `rno`
 The category flags (`-c -C`) behave identically to the miRNA set flags (`-m -M`).
 
 ```
@@ -80,7 +90,7 @@ Over-representation Analysis (ORA)
 
 * `mieaa ora SPECIES [-m | -M] [-c | -C] [OPTIONS]`
 
-Species can be specified as `hsa`, `mmu`, or `rno`.
+Species must be specified using their three letter identifier, e.g. `hsa`, `mmu`, `rno`.
 The category flags (`-c -C`)  and reference set flags (`-r -R`) behave identically to the miRNA set flags (`-m -M`).
 
 ```

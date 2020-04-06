@@ -254,6 +254,13 @@ class API:
             * *hsa* - Homo sapiens
             * *mmu* - Mus musculus
             * *rno* - Rattus norvegicus
+            * *ath* - Arabidopsis thaliana
+            * *bta* - Bos taurus
+            * *cel* - Caenorhabditis elegans
+            * *dme* - Drosophila melanogaster
+            * *dre* - Danio rerio
+            * *gga* - Gallus gallus
+            * *ssc* - Sus scrofa
         reference_set : str or file-like, default=''
             ORA specific, background reference set of miRNAs/precursors
 
@@ -351,6 +358,13 @@ class API:
             * *hsa* - Homo sapiens
             * *mmu* - Mus musculus
             * *rno* - Rattus norvegicus
+            * *ath* - Arabidopsis thaliana
+            * *bta* - Bos taurus
+            * *cel* - Caenorhabditis elegans
+            * *dme* - Drosophila melanogaster
+            * *dre* - Danio rerio
+            * *gga* - Gallus gallus
+            * *ssc* - Sus scrofa
         reference_set : str or file-like, default=''
             ORA specific, background reference set of miRNAs/precursors
 
@@ -395,6 +409,13 @@ class API:
             * *hsa* - Homo sapiens
             * *mmu* - Mus musculus
             * *rno* - Rattus norvegicus
+            * *ath* - Arabidopsis thaliana
+            * *bta* - Bos taurus
+            * *cel* - Caenorhabditis elegans
+            * *dme* - Drosophila melanogaster
+            * *dre* - Danio rerio
+            * *gga* - Gallus gallus
+            * *ssc* - Sus scrofa
         reference_set : str or file-like, default=''
             ORA specific, background reference set of miRNAs/precursors
 
@@ -491,6 +512,13 @@ class API:
             * *hsa* - Homo sapiens
             * *mmu* - Mus musculus
             * *rno* - Rattus norvegicus
+            * *ath* - Arabidopsis thaliana
+            * *bta* - Bos taurus
+            * *cel* - Caenorhabditis elegans
+            * *dme* - Drosophila melanogaster
+            * *dre* - Danio rerio
+            * *gga* - Gallus gallus
+            * *ssc* - Sus scrofa
         with_suffix : bool, default=False
             whether to include '_precursor' or '_mature' at end of category name
 

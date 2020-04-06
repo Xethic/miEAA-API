@@ -71,8 +71,9 @@ def create_subcommands(subparsers):
         default='all', help='Only output ids that map uniquely')
 
     # Abstract Analysis Parser
+    species_choices = ['hsa', 'mmu', 'rno', 'ath', 'bta', 'cel', 'dme', 'dre', 'gga', 'ssc']
     enrichment_parser = argparse.ArgumentParser(add_help=False, parents=[abstract_parser])
-    enrichment_parser.add_argument('species', choices=['hsa', 'mmu', 'rno'], help='Species')
+    enrichment_parser.add_argument('species', choices=species_choices, help='Species')
     categories_group = enrichment_parser.add_argument_group(*mutex_help_text(required=True))
     categories_group.add_argument('-c', '--categories', nargs='+',
         help='Set of categories to include in analysis')
