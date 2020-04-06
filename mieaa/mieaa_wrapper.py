@@ -1,4 +1,5 @@
 import requests
+from http.client import RemoteDisconnected
 from io import IOBase
 from re import findall
 from time import sleep, time
@@ -37,29 +38,27 @@ class API_Session(requests.Session):
 
 class API:
     """ miEAA api wrapper class.
-    Each instance is tied to a Job ID after running calling `start_analysis()`.
+    Each instance is tied to a Job ID after starting an enrichment analysis.
     Instance must be invalidated with `invalidate()` before starting a new analysis.
 
-    Class Attributes
-    ----------------
-    root_url: str
+    Attributes
+    ----------
+    root_url [class attribute] : str
         API root url
-    api_version:
-        current api version
-    endpoints:
+    api_version [class attribute] : str
+        Current API version
+    endpoints [class attribute] : dict
         API endpoints suffix
-    wait_between_requests: float
+    wait_between_requests [class attribute] : float
         How many seconds to wait between API requests (due to throttling)
-    default: dict
-        default settings to pass to converter or analysis apis
-
-    Instance Attributes
-    -------------------
-    session: API_Session
+    default [class attribute] : dict
+        Default settings to pass to converter or analysis apis
+    session [instance attribute] : API_Session
         Session information necessary to retrieve results
-    job_id: uuid
+    job_id [instance attribute] : uuid
         Unique identifier for enrichment analysis job of current session
     """
+
     root_url = "https://anathema.cs.uni-saarland.de/mieaa_tool/api/"
     api_version = 'v1'
     wait_between_requests = 1
@@ -94,41 +93,41 @@ class API:
         self.results_response = None
 
     def invalidate(self):
-        """ Invalidate current session"""
+        """ Invalidate current session. Results will become irretrievable."""
         self.session.close()
         self.job_id = None
         self._enrichment_parameters = None
         self._cached_results_type = None
         self.results_response = None
 
-    def convert_mirbase_version(self, mirnas: Union[str, Iterable[str], IO], from_version: float, to_version: float,
-                                mirna_type: str, to_file: Union[str, IO]='', **default_overrides) -> List[str]:
+    def convert_mirbase(self, mirnas: Union[str, Iterable[str], IO], from_version: float, to_version: float,
+                                mirna_type: str, to_file: Union[str, IO]='', **kwargs) -> List[str]:
         """ Convert a set of either miRNAs/precursors from one miRbase version to another
 
-        params
-        ------
-        mirnas: str or iterable
-            Iterable or delimited string of mirnas, e.g. 'hsa-miR-199a-5p,hsa-mir-550b-1;'
-        from_version: float
-            MiRbase version to convert `mirnas` from.
-        to_version: float
-            MiRbase version to update `mirnas` to.
-        mirna_type: str
-            `precursor` - Precursor to a mature miRNA, e.g. hsa-mir-550b-1
-            `mirna` - Mature miRNA, e.g. hsa-miR-199a-5p
+        Parameters
+        -----------
+        mirnas : str or iterable
+            Iterable or delimited string of miRNAs, e.g. 'hsa-miR-199a-5p,hsa-mir-550b-1;'
+        from_version : float
+            MiRbase version to convert 'mirnas' from.
+        to_version : float
+            MiRbase version to update 'mirnas' to.
+        mirna_type : str
+            miRNAs/precursors to convert
+            * *precursor* - Precursor to a mature miRNA, e.g. hsa-mir-550b-1
+            * *mirna* - Mature miRNA, e.g. hsa-miR-199a-5p
             Mixed input is not currently supported.
-        to_file: str or file-type (optional)
-            if non-empy, save results to provided file name/path
+        to_file : str or file-type, optional
+            if non-empty, save results to provided file name/path
+        **kwargs
+            output_format (str, default='oneline')
+                * *oneline* - Text containing only converted ids
+                * *tabsep* - Tab-separated input and output id
 
-        default_overrides kwargs (optional)
-        -----------------
-        output_format: str, default='oneline'
-            `oneline` - Text containing only converted ids
-            `tabsep` - Tab-separated input and output id
-
-        return
-        ------
-            List of converted mirnas.
+        Returns
+        -------
+        list
+            Converted miRNAs
         """
         if isinstance(mirnas, IOBase):
             mirnas = mirnas.read().splitlines()
@@ -141,34 +140,34 @@ class API:
             'mirbase_output_version': 'v{}'.format(to_version),
         }
 
-        return self._convert('mirbase_converter', base_payload, to_file, default_overrides)
+        return self._convert('mirbase_converter', base_payload, to_file, kwargs)
 
-    def convert_mirna_type(self, mirnas: Union[str, Iterable[str], IO], conversion: str,
-                           to_file: Union[str, IO]='', **default_overrides) -> List[str]:
-        """ Convert from precursor->mirna or mirna->precursor
+    def _convert_mirna_type(self, mirnas: Union[str, Iterable[str], IO], conversion: str,
+                           to_file: Union[str, IO]='', **kwargs) -> List[str]:
+        """ Convert from precursor->mirna or mirna-> precursor
 
-        params
-        ------
-        mirnas: str or iterable
-            Iterable or delimited string of mirnas, e.g. 'hsa-miR-199a-5p,hsa-mir-550b-1'
-        conversion: str
-            `to_mirna` - Convert precursors to mirnas
-            `to_precursor` - Convert mirna to precursors
-        to_file: str (optional)
-            if non-empy, save results to provided file name/path
+        Parameters
+        -----------
+        mirnas : str or iterable
+            Iterable or delimited string of miRNAs, e.g. 'hsa-miR-199a-5p,hsa-mir-550b-1'
+        conversion : str
+            * *to_mirna* - Convert precursors to miRNAs
+            * *to_precursor* - Convert mirna to precursors
+        to_file : str, optional
+            if non-empty, save results to provided file name/path
+        **kwargs
+            output_format (str, default='oneline')
+                * *oneline* - Text containing only converted ids, multi-mapped are semicolon separated
+                * *newline* - Text containing only converted ids, multi-mapped are newline separated
+                * *tabsep* - Tab-separated input and output id
+            conversion_type (str, default='all')
+                * *all* - Output all mappings
+                * *unique* - Only output unique mappings
 
-        default_overrides kwargs (optional)
-        -----------------
-        output_format: str, default='oneline'
-            `oneline` - Text containing only converted ids
-            `tabsep` - Tab-separated input and output id
-        conversion_type: str, default='all'
-            `all` - Output all mappings
-            `unique` - Only output unique mappings
-
-        return
-        ------
-            List of converted mirnas.
+        Returns
+        -------
+        list
+            Converted miRNAs
         """
         if isinstance(mirnas, IOBase):
             mirnas = mirnas.read().splitlines()
@@ -179,60 +178,111 @@ class API:
             'input_type': conversion.lower()
         }
 
-        return self._convert('mirna_type_converter', base_payload, to_file, default_overrides)
+        return self._convert('mirna_type_converter', base_payload, to_file, kwargs)
 
-    def convert_precursor_to_mirna(self, mirnas: Union[str, Iterable[str], IO],
-                                   to_file: Union[str, IO]='', **default_overrides) -> List[str]:
-        return self.convert_mirna_type(mirnas, 'to_mirna', to_file, **default_overrides)
+    def to_mirna(self, mirnas: Union[str, Iterable[str], IO],
+                                   to_file: Union[str, IO]='', **kwargs) -> List[str]:
+        """ Convert from precursor->mirna
 
-    def convert_mirna_to_precursor(self, mirnas: Union[str, Iterable[str], IO],
-                                   to_file: Union[str, IO]='', **default_overrides) -> List[str]:
-        return self.convert_mirna_type(mirnas, 'to_precursor', to_file, **default_overrides)
+        Parameters
+        -----------
+        mirnas : str or iterable
+            Iterable or delimited string of miRNAs, e.g. 'hsa-miR-199a-5p,hsa-mir-550b-1'
+        to_file : str, optional
+            if non-empty, save results to provided file name/path
+        **kwargs
+            output_format (str, default='oneline')
+                * *oneline* - Text containing only converted ids, multi-mapped are semicolon separated
+                * *newline* - Text containing only converted ids, multi-mapped are newline separated
+                * *tabsep* - Tab-separated input and output id
+            conversion_type (str, default='all')
+                * *all* - Output all mappings
+                * *unique* - Only output unique mappings
 
-    def start_analysis(self, analysis_type: str, test_set: Union[str, Iterable, IO],
+        Returns
+        -------
+        list
+            Converted miRNAs
+        """
+        return self._convert_mirna_type(mirnas, 'to_mirna', to_file, **kwargs)
+
+    def to_precursor(self, mirnas: Union[str, Iterable[str], IO],
+                                   to_file: Union[str, IO]='', **kwargs) -> List[str]:
+        """ Convert from mirna->precursor
+
+        Parameters
+        -----------
+        mirnas : str or iterable
+            Iterable or delimited string of miRNAs, e.g. 'hsa-miR-199a-5p,hsa-mir-550b-1'
+        to_file : str, optional
+            if non-empty, save results to provided file name/path
+        **kwargs
+            output_format (str, default='oneline')
+                * *oneline* - Text containing only converted ids, multi-mapped are semicolon separated
+                * *newline* - Text containing only converted ids, multi-mapped are newline separated
+                * *tabsep* - Tab-separated input and output id
+            conversion_type (str, default='all')
+                * *all* - Output all mappings
+                * *unique* - Only output unique mappings
+
+        Returns
+        -------
+        list
+            Converted miRNAs
+        """
+        return self._convert_mirna_type(mirnas, 'to_precursor', to_file, **kwargs)
+
+    def _start_analysis(self, analysis_type: str, test_set: Union[str, Iterable, IO],
                        categories: Union[str, Iterable, IOBase], mirna_type: str, species: str,
-                       reference_set: Union[str, Iterable, IOBase]='', **default_overrides) -> requests.Response:
-        """ Convert a set of either miRNAs/precursors from one miRbase version to another
+                       reference_set: Union[str, Iterable, IOBase]='', **kwargs) -> requests.Response:
+        """ Start Enrichment Analysis
 
-        params
-        ------
-        analysis_type: str
-            `ORA` - Over-representation Analysis
-            `GSEA` - miRNA enrichment analysis
-        test_set: str, iterable or file-like
-            set of mirnas/precursors we want to test
-        categories: str, iterable or file-like
+        Parameters
+        -----------
+        analysis_type : str
+            * *ORA* - Over-representation Analysis
+            * *GSEA* - miRNA enrichment analysis
+        test_set : str, iterable or file-like
+            set of miRNAs/precursors we want to test
+        categories : str, iterable or file-like
             Categories we want to run analysis on
-        mirna_type: str
-            `precursor` - Precursor to a mature miRNA, e.g. hsa-mir-550b-1
-            `mirna` - Mature miRNA, e.g. hsa-miR-199a-5p
-        species: str
-            `hsa` - Homo sapiens
-            `mmu` - Mus musculus
-            `rno` - Rattus norvegicus
-        reference_set: (optional, default='')
-            ORA specific, background reference set of mirnas/precursors
+        mirna_type : str
+            * *precursor* - Precursor to a mature miRNA, e.g. hsa-mir-550b-1
+            * *mirna* - Mature miRNA, e.g. hsa-miR-199a-5p
+        species : str
+            * *hsa* - Homo sapiens
+            * *mmu* - Mus musculus
+            * *rno* - Rattus norvegicus
+            * *ath* - Arabidopsis thaliana
+            * *bta* - Bos taurus
+            * *cel* - Caenorhabditis elegans
+            * *dme* - Drosophila melanogaster
+            * *dre* - Danio rerio
+            * *gga* - Gallus gallus
+            * *ssc* - Sus scrofa
+        reference_set : str or file-like, default=''
+            ORA specific, background reference set of miRNAs/precursors
 
-        default_overrides kwargs (optional)
-        -----------------
-        p_value_adjustment: str, default='fdr'
-            `none` - No adjustment
-            `fdr` - FDR (Benjamini-Hochberg) adjustment
-            `bonferroni` - Bonferroni adjustment
-            `BY` - Benjamini-Yekutieli adjustment
-            `hochberg` - Hochberg adjustment
-            `holm` - Holm adjustment
-            `hommel` - Hommel adjustment
-        independent_p_adjust: bool, default=True
-            `True` - Adjust p-values for each category independently
-            `False` - Adjust p-values for all categories collectively
-        significance_level: float, default=0.05
-            Filter out p-values above significance level
-        threshold_level: int, default=2
-            Filter out subcategories that contain less than this many mirnas
+        **kwargs
+            p_value_adjustment (str, default='fdr')
+                * *none* - No adjustment
+                * *fdr* - FDR (Benjamini-Hochberg) adjustment
+                * *bonferroni* - Bonferroni adjustment
+                * *BY* - Benjamini-Yekutieli adjustment
+                * *hochberg* - Hochberg adjustment
+                * *holm* - Holm adjustment
+                * *hommel* - Hommel adjustment
+            independent_p_adjust (bool, default=True)
+                * *True* - Adjust p-values for each category independently
+                * *False* - Adjust p-values for all categories collectively
+            significance_level (float, default=0.05)
+                Filter out p-values above significance level
+            threshold_level (int, default=2)
+                Filter out subcategories that contain less than this many miRNAs
 
-        return
-        ------
+        Returns
+        -------
+        requests.Response
             Response
         """
         def format_categories(categories, mirna_type, species):
@@ -258,7 +308,7 @@ class API:
         }
         files = {}
 
-        payload = self._extend_payload(base_payload, default_overrides, 'analysis')
+        payload = self._extend_payload(base_payload, kwargs, 'analysis')
 
         # check if test set is file or string
         if isinstance(test_set, IOBase):
@@ -291,34 +341,134 @@ class API:
         return response
 
     def run_ora(self, test_set: Union[str, Iterable, IO], categories: Iterable, mirna_type: str,
-                species: str, reference_set: Union[str, IOBase]='', **default_overrides):
-        return self.start_analysis('ORA', test_set, categories, mirna_type, species, reference_set, **default_overrides)
+                species: str, reference_set: Union[str, IOBase]='', **kwargs):
+        """ Start Over Enrichment Analysis
+
+        Parameters
+        -----------
+        test_set : str, iterable or file-like
+            set of miRNAs/precursors we want to test
+        categories : str, iterable or file-like
+            Categories we want to run analysis on
+        mirna_type : str
+            * *precursor* - Precursor to a mature miRNA, e.g. hsa-mir-550b-1
+            * *mirna* - Mature miRNA, e.g. hsa-miR-199a-5p
+        species : str
+            * *hsa* - Homo sapiens
+            * *mmu* - Mus musculus
+            * *rno* - Rattus norvegicus
+            * *ath* - Arabidopsis thaliana
+            * *bta* - Bos taurus
+            * *cel* - Caenorhabditis elegans
+            * *dme* - Drosophila melanogaster
+            * *dre* - Danio rerio
+            * *gga* - Gallus gallus
+            * *ssc* - Sus scrofa
+        reference_set : str or file-like, default=''
+            ORA specific, background reference set of miRNAs/precursors
+
+        **kwargs
+            p_value_adjustment (str, default='fdr')
+                * *none* - No adjustment
+                * *fdr* - FDR (Benjamini-Hochberg) adjustment
+                * *bonferroni* - Bonferroni adjustment
+                * *BY* - Benjamini-Yekutieli adjustment
+                * *hochberg* - Hochberg adjustment
+                * *holm* - Holm adjustment
+                * *hommel* - Hommel adjustment
+            independent_p_adjust (bool, default=True)
+                * *True* - Adjust p-values for each category independently
+                * *False* - Adjust p-values for all categories collectively
+            significance_level (float, default=0.05)
+                Filter out p-values above significance level
+            threshold_level (int, default=2)
+                Filter out subcategories that contain less than this many miRNAs
+
+        Returns
+        -------
+        requests.Response
+            Response
+        """
+        return self._start_analysis('ORA', test_set, categories, mirna_type, species, reference_set, **kwargs)
 
     def run_gsea(self, test_set: Union[str, Iterable, IO], categories: Iterable, mirna_type: str,
-                 species: str, **default_overrides):
-        return self.start_analysis('GSEA',  test_set, categories, mirna_type, species, '', **default_overrides)
+                 species: str, **kwargs):
+        """ Start miRNA Set Enrichment Analysis
 
-    def get_progress_response(self):
+        Parameters
+        -----------
+        test_set : str, iterable or file-like
+            set of miRNAs/precursors we want to test
+        categories : str, iterable or file-like
+            Categories we want to run analysis on
+        mirna_type : str
+            * *precursor* - Precursor to a mature miRNA, e.g. hsa-mir-550b-1
+            * *mirna* - Mature miRNA, e.g. hsa-miR-199a-5p
+        species : str
+            * *hsa* - Homo sapiens
+            * *mmu* - Mus musculus
+            * *rno* - Rattus norvegicus
+            * *ath* - Arabidopsis thaliana
+            * *bta* - Bos taurus
+            * *cel* - Caenorhabditis elegans
+            * *dme* - Drosophila melanogaster
+            * *dre* - Danio rerio
+            * *gga* - Gallus gallus
+            * *ssc* - Sus scrofa
+        reference_set : str or file-like, default=''
+            ORA specific, background reference set of miRNAs/precursors
+
+        **kwargs
+            p_value_adjustment (str, default='fdr')
+                * *none* - No adjustment
+                * *fdr* - FDR (Benjamini-Hochberg) adjustment
+                * *bonferroni* - Bonferroni adjustment
+                * *BY* - Benjamini-Yekutieli adjustment
+                * *hochberg* - Hochberg adjustment
+                * *holm* - Holm adjustment
+                * *hommel* - Hommel adjustment
+            independent_p_adjust (bool, default=True)
+                * *True* - Adjust p-values for each category independently
+                * *False* - Adjust p-values for all categories collectively
+            significance_level (float, default=0.05)
+                Filter out p-values above significance level
+            threshold_level (int, default=2)
+                Filter out subcategories that contain less than this many miRNAs
+
+        Returns
+        -------
+        requests.Response
+            Response
+        """
+        return self._start_analysis('GSEA',  test_set, categories, mirna_type, species, '', **kwargs)
+
+    def _get_progress_response(self):
         if not self.job_id:
-            raise RuntimeError('No enrichment analysis has been initiaited.')
+            raise RuntimeError('No enrichment analysis has been initiated.')
         url = self._get_endpoint('status', job_id=self.job_id)
         response = self.session.wait_get(url, wait=self.wait_between_requests)
         descriptive_http_error(response)
         return response
 
     def get_progress(self):
-        return self.get_progress_response().json()['status']
+        """ Retrieve enrichment analysis progress """
+        return self._get_progress_response().json()['status']
 
-    def get_results(self, results_format: str='json', check_progress_interval: float=5.) -> Union[str, list]:
+    def get_results(self, results_format: str='json', check_progress_interval: float=5., retries=5) -> Union[str, list]:
         """ Return results in json or csv format
 
-        params
-        ------
-        results_format: str (default='json')
-            `json` - retrieve results in json format
-            `csv` - retrieve results in csv format
+        Parameters
+        -----------
+        results_format: str, default='json'
+            * *json* - retrieve results in json format
+            * *csv* - retrieve results in csv format
         check_progress_interval: float
             How many seconds to wait between checking if results have been computed
+
+        Returns
+        -------
+        requests.Response
+            Response
         """
         if not self.job_id:
             raise RuntimeError('No enrichment analysis has been initiaited.')
@@ -330,38 +480,51 @@ class API:
 
         self._cached_results_type = results_format
         progress = 0
-        while progress < 100:
-            sleep(check_progress_interval)
-            progress = self.get_progress()
-            if progress == 'FAILED':
-                return [] if results_format == 'json' else ''
 
-        url = self._get_endpoint('results', job_id=self.job_id)
-        response = self.session.wait_get(url, params={'format': results_format}, wait=self.wait_between_requests)
-        descriptive_http_error(response)
-        self.results_response = response
-        if results_format == 'json':
-            return self.results_response.json()
-        return self.results_response.text
+        for _ in range(retries):
+            try:
+                while progress < 100:
+                    sleep(check_progress_interval)
+                    progress = self.get_progress()
+                    if progress == 'FAILED':
+                        return [] if results_format == 'json' else ''
+
+                url = self._get_endpoint('results', job_id=self.job_id)
+                response = self.session.wait_get(url, params={'format': results_format}, wait=self.wait_between_requests)
+                descriptive_http_error(response)
+                self.results_response = response
+                if results_format == 'json':
+                    return self.results_response.json()
+                return self.results_response.text
+            except requests.exceptions.ConnectionError as e:
+                pass
 
     def get_enrichment_categories(self, mirna_type: str, species: str, with_suffix=False) -> dict:
         """ Get possible enrichment categories
 
-        params
-        ------
-        mirna_type: str
-            `precursor` - Precursor to a mature miRNA, e.g. hsa-mir-550b-1
-            `mirna` - Mature miRNA, e.g. hsa-miR-199a-5p
-        species: str
-            `hsa` - Homo sapiens
-            `mmu` - Mus musculus
-            `rno` - Rattus norvegicus
-        with_suffix: bool (default=False)
+        Parameters
+        -----------
+        mirna_type : str
+            * *precursor* - Precursor to a mature miRNA, e.g. hsa-mir-550b-1
+            * *mirna* - Mature miRNA, e.g. hsa-miR-199a-5p
+        species : str
+            * *hsa* - Homo sapiens
+            * *mmu* - Mus musculus
+            * *rno* - Rattus norvegicus
+            * *ath* - Arabidopsis thaliana
+            * *bta* - Bos taurus
+            * *cel* - Caenorhabditis elegans
+            * *dme* - Drosophila melanogaster
+            * *dre* - Danio rerio
+            * *gga* - Gallus gallus
+            * *ssc* - Sus scrofa
+        with_suffix : bool, default=False
             whether to include '_precursor' or '_mature' at end of category name
 
-        return
-        ------
-        dict where keys are categories and values are descriptions
+        Returns
+        -------
+        dict
+            Keys are categories and values are their descriptions
         """
         url = self._get_endpoint('categories', species=species.lower(), mirna=mirna_type.lower())
         response = self.session.wait_get(url, wait=self.wait_between_requests)
@@ -378,13 +541,13 @@ class API:
                                 check_progress_interval: float=5.) -> str:
         """ Save results in specified format
 
-        parameters
+        Parameters
         ----------
-        save_file: str or file-like
+        save_file : str or file-like
             File to save results in
-        file_type: str, (default='csv')
+        file_type : str, default='csv'
             Type of file to write results to. Options are `json` or `csv`
-        check_progress_interval: float, (default=5)
+        check_progress_interval : float, default=5
             How many seconds to wait between checking if results have been computed
         """
         results = str(self.get_results(file_type, check_progress_interval))
@@ -396,8 +559,9 @@ class API:
         return results
 
     def get_enrichment_parameters(self):
+        """ Retrieve parameters used during enrichment analysis"""
         if not self.job_id:
-            raise RuntimeError('No enrichment analysis has been initiaited.')
+            raise RuntimeError('No enrichment analysis has been initiated.')
         return self._enrichment_parameters
 
     def _convert(self, converter_type, base_payload, to_file, default_overrides):

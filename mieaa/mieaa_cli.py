@@ -4,16 +4,15 @@ from ._version import __version__
 
 def type_converter(mieaa, args):
     mirnas = args.mirna_set_file if args.mirna_set_file else args.mirna_set
-    return mieaa.convert_mirna_type(mirnas, args.parser_name, args.outfile,
+    return mieaa._convert_mirna_type(mirnas, args.parser_name, args.outfile,
                                     conversion_type=args.conv_type, output_format=args.out_format)
 
 
 def mirbase_converter(mieaa, args):
     mirnas = args.mirna_set_file if args.mirna_set_file else args.mirna_set
-    # oneline and newline behave identically in mirbase converter
     formatting = 'oneline' if args.out_format == 'newline' else args.out_format
-    return mieaa.convert_mirbase_version(mirnas, args.from_, args.to, args.mirna_type, args.outfile,
-                                         output_format=formatting)
+    return mieaa.convert_mirbase(mirnas, args.from_, args.to, args.mirna_type, args.outfile,
+                                         output_format=args.out_format)
 
 
 def enrichment_analsis(mieaa, args):
@@ -27,7 +26,7 @@ def enrichment_analsis(mieaa, args):
         elif args.reference_set:
             ref_set = args.reference_set
 
-    mieaa.start_analysis(args.parser_name.upper(), mirnas, categories, args.mirna_type, args.species, ref_set,
+    mieaa._start_analysis(args.parser_name.upper(), mirnas, categories, args.mirna_type, args.species, ref_set,
                          p_value_adjustment=args.adjustment, independent_p_adjust=args.indep_adjust,
                          significance_level=args.significance, threshold_level=args.threshold)
 
@@ -59,11 +58,13 @@ def create_subcommands(subparsers):
 
     # Abstract Converter applicable to all converters
     converter_parser = argparse.ArgumentParser(add_help=False, parents=[abstract_parser])
-    converter_format_group = converter_parser.add_mutually_exclusive_group()
-    converter_format_group.add_argument('-t', '--tabsep', action='store_const', const='tabsep', dest='out_format',
-        default='oneline', help='Tab-separated `original    converted` ids (Instead of just converted ids')
-    converter_format_group.add_argument('-n', '--newline', action='store_const', const='newline', dest='out_format',
-        default='oneline', help='Multi-mapped ids on individual lines (Instead of semicolon-separated')
+    output_style_group = converter_parser.add_mutually_exclusive_group()
+    output_style_group.add_argument('--oneline', action='store_const', const='oneline', dest='out_format',
+        default='oneline', help='Output style: Multi-mapped ids are separated by a semicolon (default)')
+    output_style_group.add_argument('--newline', action='store_const', const='newline', dest='out_format',
+        default='oneline', help='Output style: Multi-mapped ids are separated by a newline')
+    output_style_group.add_argument('--tabsep', action='store_const', const='tabsep', dest='out_format',
+        default='oneline', help='Output style: Tab-separated `original\tconverted` ids')
 
     # Abstract Type Converter Parser (`to_precursors` and `to_mirnas`)
     convert_type_parser = argparse.ArgumentParser(add_help=False, parents=[converter_parser])
@@ -71,8 +72,9 @@ def create_subcommands(subparsers):
         default='all', help='Only output ids that map uniquely')
 
     # Abstract Analysis Parser
+    species_choices = ['hsa', 'mmu', 'rno', 'ath', 'bta', 'cel', 'dme', 'dre', 'gga', 'ssc']
     enrichment_parser = argparse.ArgumentParser(add_help=False, parents=[abstract_parser])
-    enrichment_parser.add_argument('species', choices=['hsa', 'mmu', 'rno'], help='Species')
+    enrichment_parser.add_argument('species', choices=species_choices, help='Species')
     categories_group = enrichment_parser.add_argument_group(*mutex_help_text(required=True))
     categories_group.add_argument('-c', '--categories', nargs='+',
         help='Set of categories to include in analysis')
@@ -140,7 +142,7 @@ def main():
             err_message = 'one of the arguments `-{}` or `-{}` is required'.format(lower_flag, upper_flag)
         else:
             return
-        subparser.print_help()
+        subparser.print_usage()
         subparser.error(err_message)
 
     # Base parser requiring subcommands
@@ -149,12 +151,16 @@ def main():
     mieaa_subparsers = mieaa_parser.add_subparsers()
     create_subcommands(mieaa_subparsers)
 
-    args = mieaa_parser.parse_args()
+    args, unknown = mieaa_parser.parse_known_args()
 
     try:
         selected_parser = mieaa_subparsers.choices[args.parser_name]
     except AttributeError:  # parser_name won't be in the Namespace if no subcommand
-        mieaa_parser.error('subcommand is required')
+        mieaa_parser.error('valid subcommand is required')
+
+    if unknown:
+        selected_parser.print_usage()
+        selected_parser.error('unrecognized arguments: {}'.format(' '.join(unknown)))
 
     # check mutually exclusive flags
     exclusivity_check(selected_parser, args.mirna_set, args.mirna_set_file, 'm')
