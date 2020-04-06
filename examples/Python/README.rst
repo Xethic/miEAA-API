@@ -26,8 +26,8 @@ Results can be optionally saved to a file by specifying the ``to_file`` argument
 
 .. code:: python
 
-    # mieaa_api.convert_mirbase_version(initial_precursors, 9.1, 22, 'precursor', to_file='mirnas.txt')
-    updated_mirnas = mieaa_api.convert_mirbase_version(initial_mirnas, 16, 22, 'mirna')
+    # mieaa_api.convert_mirbase(initial_precursors, 9.1, 22, 'precursor', to_file='mirnas.txt')
+    updated_mirnas = mieaa_api.convert_mirbase(initial_mirnas, 16, 22, 'mirna')
     updated_mirnas
 
 ::
@@ -52,7 +52,7 @@ a tab separated input - output (``tabsep``).
 
 .. code:: python
 
-    precursors = mieaa_api.convert_mirna_to_precursor(updated_mirnas, to_file='./precursors.txt', conversion_type='all')
+    precursors = mieaa_api.to_precursor(updated_mirnas, to_file='./precursors.txt', conversion_type='all')
     precursors
 
 ::
@@ -66,7 +66,7 @@ a tab separated input - output (``tabsep``).
 .. code:: python
 
     with open('./precursors.txt') as prec_file:
-        mirnas = mieaa_api.convert_precursor_to_mirna(prec_file, output_format='tabsep')
+        mirnas = mieaa_api.convert_precursor_precursor_to_mirna(prec_file, output_format='tabsep')
     mirnas
 
 ::

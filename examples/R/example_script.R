@@ -5,9 +5,9 @@ mieaa_api = mieaa$API()
 
 initial_mirnas = 'hsa-miR-374c hsa-miR-642b,hsa-miR-550b;hsa-miR-107;hsa-miR-125b'
 
-updated_mirnas = mieaa_api$convert_mirbase_version(initial_mirnas, '16', '22', 'mirna')
+updated_mirnas = mieaa_api$convert_mirbase(initial_mirnas, '16', '22', 'mirna')
 
-precursors = mieaa_api$convert_mirna_to_precursor(updated_mirnas, to_file='./precursors.txt', conversion_type='all')
+precursors = mieaa_api$to_precursor(updated_mirnas, to_file='./precursors.txt', conversion_type='all')
 
 with(py$open("precursors.txt", 'r') %as% test_set_file, {
     mieaa_api$run_ora(test_set_file, list('HMDD, mndr'), 'precursor', 'hsa', reference_set='')

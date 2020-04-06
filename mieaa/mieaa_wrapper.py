@@ -101,7 +101,7 @@ class API:
         self._cached_results_type = None
         self.results_response = None
 
-    def convert_mirbase_version(self, mirnas: Union[str, Iterable[str], IO], from_version: float, to_version: float,
+    def convert_mirbase(self, mirnas: Union[str, Iterable[str], IO], from_version: float, to_version: float,
                                 mirna_type: str, to_file: Union[str, IO]='', **kwargs) -> List[str]:
         """ Convert a set of either miRNAs/precursors from one miRbase version to another
 
@@ -152,7 +152,7 @@ class API:
         mirnas : str or iterable
             Iterable or delimited string of miRNAs, e.g. 'hsa-miR-199a-5p,hsa-mir-550b-1'
         conversion : str
-            * *to_mirna* - Convert precursors to miRNAs
+            * *precursor_to_mirna* - Convert precursors to miRNAs
             * *to_precursor* - Convert mirna to precursors
         to_file : str, optional
             if non-empty, save results to provided file name/path
@@ -181,7 +181,7 @@ class API:
 
         return self._convert('mirna_type_converter', base_payload, to_file, kwargs)
 
-    def convert_precursor_to_mirna(self, mirnas: Union[str, Iterable[str], IO],
+    def convert_precursor_precursor_to_mirna(self, mirnas: Union[str, Iterable[str], IO],
                                    to_file: Union[str, IO]='', **kwargs) -> List[str]:
         """ Convert from precursor->mirna
 
@@ -205,9 +205,9 @@ class API:
         list
             Converted miRNAs
         """
-        return self._convert_mirna_type(mirnas, 'to_mirna', to_file, **kwargs)
+        return self._convert_mirna_type(mirnas, 'precursor_to_mirna', to_file, **kwargs)
 
-    def convert_mirna_to_precursor(self, mirnas: Union[str, Iterable[str], IO],
+    def to_precursor(self, mirnas: Union[str, Iterable[str], IO],
                                    to_file: Union[str, IO]='', **kwargs) -> List[str]:
         """ Convert from mirna->precursor
 
