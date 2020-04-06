@@ -57,8 +57,13 @@ def create_subcommands(subparsers):
 
     # Abstract Converter applicable to all converters
     converter_parser = argparse.ArgumentParser(add_help=False, parents=[abstract_parser])
-    converter_parser.add_argument('-t', '--tabsep', action='store_const', const='tabsep', dest='out_format',
-        default='oneline', help='Tab-separated `original:converted` ids (Instead of just converted ids')
+    output_style_group = converter_parser.add_mutually_exclusive_group()
+    output_style_group.add_argument('--oneline', action='store_const', const='oneline', dest='out_format',
+        default='oneline', help='Output style: Multi-mapped ids are separated by a semicolon (default)')
+    output_style_group.add_argument('--newline', action='store_const', const='newline', dest='out_format',
+        default='oneline', help='Output style: Multi-mapped ids are separated by a newline')
+    output_style_group.add_argument('--tabsep', action='store_const', const='tabsep', dest='out_format',
+        default='oneline', help='Output style: Tab-separated `original\tconverted` ids')
 
     # Abstract Type Converter Parser (`to_precursors` and `to_mirnas`)
     convert_type_parser = argparse.ArgumentParser(add_help=False, parents=[converter_parser])
