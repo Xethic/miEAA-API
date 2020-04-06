@@ -1,0 +1,6 @@
+category,subcategory,enrichment,p-value,p-adjusted,q-value,expected,observed,mirnas/precursors
+Diseases (HMDD),Alopecia,over-represented,0.0017138,0.0478121,0.0478121,0.0678879,2,hsa-mir-125b-1; hsa-mir-125b-2
+Diseases (HMDD),Atopic Dermatitis,over-represented,0.0021345,0.0478121,0.0478121,0.075431,2,hsa-mir-125b-1; hsa-mir-125b-2
+Diseases (HMDD),Lichen Planus,over-represented,0.0017138,0.0478121,0.0478121,0.0678879,2,hsa-mir-125b-1; hsa-mir-125b-2
+Diseases (HMDD),Myotonic Muscular Dystrophy,over-represented,0.00063573,0.0356009,0.0356009,0.196121,3,hsa-mir-107; hsa-mir-125b-1; hsa-mir-125b-2
+Diseases (HMDD),Nevus,over-represented,0.000145941,0.0163454,0.0163454,0.0226293,2,hsa-mir-125b-1; hsa-mir-125b-2
