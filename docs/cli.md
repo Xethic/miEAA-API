@@ -13,7 +13,8 @@ In such cases, the flag letter is identical, with lowercase specifying string/li
 For subcommands where you need to specify precursor or mature, mature is always assumed unless the `--precursor` (`-p`) flag is set.
 
 **Mutually exclusive options**  
-Each subcommand requires either `--mirna-set` (`-m`) or `--mirna-set-file` (`-M`) to be specified. Enrichment analyses also require similarly behaving arguments for categories, and optionally for reference sets in the case of ORA. 
+Each subcommand requires either `--mirna-set` (`-m`) or `--mirna-set-file` (`-M`) to be specified.
+Enrichment analyses also require similarly behaving arguments for categories (`-c` or `-C`), and optionally for reference sets (`-r` or `-R`) in the case of ORA.
 
 * `mieaa SUBCOMMAND --mirna-set MIRNA [MIRNA ...]`
 * `mieaa SUBCOMMAND --mirna-set MIRNAS_STRING`
@@ -29,7 +30,7 @@ Convert miRNA -> precursor
 
 ```
 $ mieaa to_precursor -m hsa-miR-20b-5p hsa-miR-144-5p --tabsep --unique
-$ mieaa to_precursor -m 'hsa-miR-20b-5p,hsa-miR-144-5p' -o precursors.txt
+$ mieaa to_precursor -m 'hsa-miR-20b-5p,hsa-miR-144-5p' --newline -o precursors.txt
 $ mieaa to_precursor -M mirnas.txt --outfile precursors.txt
 ```
 
@@ -41,7 +42,7 @@ Converting between precursor -> miRNA
 
 ```
 $ mieaa to_mirna -m hsa-mir-20b hsa-mir-144 --tabsep --unique
-$ mieaa to_mirna -m 'hsa-mir-20b,hsa-mir-144' -o mirnas.txt
+$ mieaa to_mirna -m 'hsa-mir-20b,hsa-mir-144' --newline -o mirnas.txt
 $ mieaa to_mirna -M precursors.txt --outfile mirnas.txt
 ```
 

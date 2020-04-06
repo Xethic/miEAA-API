@@ -140,7 +140,7 @@ def main():
             err_message = 'one of the arguments `-{}` or `-{}` is required'.format(lower_flag, upper_flag)
         else:
             return
-        subparser.print_help()
+        subparser.print_usage()
         subparser.error(err_message)
 
     # Base parser requiring subcommands
@@ -157,7 +157,7 @@ def main():
         mieaa_parser.error('valid subcommand is required')
 
     if unknown:
-        selected_parser.print_help()
+        selected_parser.print_usage()
         selected_parser.error('unrecognized arguments: {}'.format(' '.join(unknown)))
 
     # check mutually exclusive flags

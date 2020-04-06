@@ -37,7 +37,7 @@ class API_Session(requests.Session):
 
 class API:
     """ miEAA api wrapper class.
-    Each instance is tied to a Job ID after running calling `start_analysis()`.
+    Each instance is tied to a Job ID after starting an enrichment analysis.
     Instance must be invalidated with `invalidate()` before starting a new analysis.
 
     Attributes
@@ -203,7 +203,7 @@ class API:
         list
             Converted miRNAs
         """
-        return self.convert_mirna_type(mirnas, 'to_mirna', to_file, **kwargs)
+        return self._convert_mirna_type(mirnas, 'to_mirna', to_file, **kwargs)
 
     def convert_mirna_to_precursor(self, mirnas: Union[str, Iterable[str], IO],
                                    to_file: Union[str, IO]='', **kwargs) -> List[str]:
@@ -229,7 +229,7 @@ class API:
         list
             Converted miRNAs
         """
-        return self.convert_mirna_type(mirnas, 'to_precursor', to_file, **kwargs)
+        return self._convert_mirna_type(mirnas, 'to_precursor', to_file, **kwargs)
 
     def _start_analysis(self, analysis_type: str, test_set: Union[str, Iterable, IO],
                        categories: Union[str, Iterable, IOBase], mirna_type: str, species: str,
@@ -314,7 +314,6 @@ class API:
             payload['reference_set'] = ''
         else:
             payload['reference_set'] = reference_set if isinstance(reference_set, str) else ';'.join(reference_set)
-
         url = self._get_endpoint('enrichment', species=species.lower(),
                                  analysis=analysis_type.upper(), mirna=mirna_type.lower())
 
@@ -374,7 +373,7 @@ class API:
         requests.Response
             Response
         """
-        return self.start_analysis('ORA', test_set, categories, mirna_type, species, reference_set, **kwargs)
+        return self._start_analysis('ORA', test_set, categories, mirna_type, species, reference_set, **kwargs)
 
     def run_gsea(self, test_set: Union[str, Iterable, IO], categories: Iterable, mirna_type: str,
                  species: str, **kwargs):
@@ -418,7 +417,7 @@ class API:
         requests.Response
             Response
         """
-        return self.start_analysis('GSEA',  test_set, categories, mirna_type, species, '', **kwargs)
+        return self._start_analysis('GSEA',  test_set, categories, mirna_type, species, '', **kwargs)
 
     def _get_progress_response(self):
         if not self.job_id:
@@ -429,7 +428,8 @@ class API:
         return response
 
     def get_progress(self):
-        return self.get_progress_response().json()['status']
+        """ Retrieve enrichment analysis progress """
+        return self._get_progress_response().json()['status']
 
     def get_results(self, results_format: str='json', check_progress_interval: float=5.) -> Union[str, list]:
         """ Return results in json or csv format
