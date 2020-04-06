@@ -13,9 +13,8 @@ Python Package Index
 
     $ pip install mieaa
 
-Conda |condaBadge|
-------------------
-
+Conda |condaBadge|_
+-------------------
 .. |condaBadge| image::  https://anaconda.org/conda-forge/skidl/badges/installer/conda.svg
 .. _condaBadge: https://anaconda.org/ccb-sb/mieaa
 
