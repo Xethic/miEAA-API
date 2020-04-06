@@ -1,6 +1,6 @@
 from setuptools import setup
 
-with open('README.md', 'r') as desc_file:
+with open('README.rst', 'r') as desc_file:
     long_description = desc_file.read()
 
 with open('./mieaa/_version.py') as version_file:

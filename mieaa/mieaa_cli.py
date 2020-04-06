@@ -4,7 +4,7 @@ from ._version import __version__
 
 def type_converter(mieaa, args):
     mirnas = args.mirna_set_file if args.mirna_set_file else args.mirna_set
-    return mieaa.convert_mirna_type(mirnas, args.parser_name, args.outfile,
+    return mieaa._convert_mirna_type(mirnas, args.parser_name, args.outfile,
                                     conversion_type=args.conv_type, output_format=args.out_format)
 
 
@@ -25,7 +25,7 @@ def enrichment_analsis(mieaa, args):
         elif args.reference_set:
             ref_set = args.reference_set
 
-    mieaa.start_analysis(args.parser_name.upper(), mirnas, categories, args.mirna_type, args.species, ref_set,
+    mieaa._start_analysis(args.parser_name.upper(), mirnas, categories, args.mirna_type, args.species, ref_set,
                          p_value_adjustment=args.adjustment, independent_p_adjust=args.indep_adjust,
                          significance_level=args.significance, threshold_level=args.threshold)
 
@@ -144,12 +144,16 @@ def main():
     mieaa_subparsers = mieaa_parser.add_subparsers()
     create_subcommands(mieaa_subparsers)
 
-    args = mieaa_parser.parse_args()
+    args, unknown = mieaa_parser.parse_known_args()
 
     try:
         selected_parser = mieaa_subparsers.choices[args.parser_name]
     except AttributeError:  # parser_name won't be in the Namespace if no subcommand
-        mieaa_parser.error('subcommand is required')
+        mieaa_parser.error('valid subcommand is required')
+
+    if unknown:
+        selected_parser.print_help()
+        selected_parser.error('unrecognized arguments: {}'.format(' '.join(unknown)))
 
     # check mutually exclusive flags
     exclusivity_check(selected_parser, args.mirna_set, args.mirna_set_file, 'm')
