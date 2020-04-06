@@ -1,4 +1,5 @@
 import requests
+from http.client import RemoteDisconnected
 from io import IOBase
 from re import findall
 from time import sleep, time
@@ -59,6 +60,7 @@ class API:
     """
 
     root_url = "https://anathema.cs.uni-saarland.de/mieaa_tool/api/"
+    # root_url = "http://localhost:8000/api/"
     api_version = 'v1'
     wait_between_requests = 1
 
@@ -314,6 +316,7 @@ class API:
             payload['reference_set'] = ''
         else:
             payload['reference_set'] = reference_set if isinstance(reference_set, str) else ';'.join(reference_set)
+
         url = self._get_endpoint('enrichment', species=species.lower(),
                                  analysis=analysis_type.upper(), mirna=mirna_type.lower())
 
@@ -431,7 +434,7 @@ class API:
         """ Retrieve enrichment analysis progress """
         return self._get_progress_response().json()['status']
 
-    def get_results(self, results_format: str='json', check_progress_interval: float=5.) -> Union[str, list]:
+    def get_results(self, results_format: str='json', check_progress_interval: float=5., retries=5) -> Union[str, list]:
         """ Return results in json or csv format
 
         Parameters
@@ -457,19 +460,24 @@ class API:
 
         self._cached_results_type = results_format
         progress = 0
-        while progress < 100:
-            sleep(check_progress_interval)
-            progress = self.get_progress()
-            if progress == 'FAILED':
-                return [] if results_format == 'json' else ''
 
-        url = self._get_endpoint('results', job_id=self.job_id)
-        response = self.session.wait_get(url, params={'format': results_format}, wait=self.wait_between_requests)
-        descriptive_http_error(response)
-        self.results_response = response
-        if results_format == 'json':
-            return self.results_response.json()
-        return self.results_response.text
+        for _ in range(retries):
+            try:
+                while progress < 100:
+                    sleep(check_progress_interval)
+                    progress = self.get_progress()
+                    if progress == 'FAILED':
+                        return [] if results_format == 'json' else ''
+
+                url = self._get_endpoint('results', job_id=self.job_id)
+                response = self.session.wait_get(url, params={'format': results_format}, wait=self.wait_between_requests)
+                descriptive_http_error(response)
+                self.results_response = response
+                if results_format == 'json':
+                    return self.results_response.json()
+                return self.results_response.text
+            except requests.exceptions.ConnectionError as e:
+                pass
 
     def get_enrichment_categories(self, mirna_type: str, species: str, with_suffix=False) -> dict:
         """ Get possible enrichment categories
