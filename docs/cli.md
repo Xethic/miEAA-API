@@ -80,7 +80,7 @@ The category flags (`-c -C`) behave identically to the miRNA set flags (`-m -M`)
 $ mieaa gsea hsa --precursors -M precursors.txt -C categories.txt -o results.csv
 $ mieaa gsea hsa -p -M precursors.txt -c HMDD MNDR > results.csv
 $ mieaa gsea mmu -M mirnas.txt -C categories.txt --adjustment none
-$ mieaa gsea rno -M mirnas.txt -C categories.txt -a bonferonni --json -o results.json
+$ mieaa gsea rno -M mirnas.txt -C categories.txt -a bonferroni --json -o results.json
 ```
 
 ### ora
@@ -97,5 +97,5 @@ $ mieaa ora hsa --precursors -M precursors.txt -C categories.txt > results.csv
 $ mieaa ora hsa -p -M precursors.txt -c HMDD MNDR -o results.csv
 $ mieaa ora hsa -p -M precursors.txt -C categories.txt -R reference.txt
 $ mieaa ora mmu -M mirnas.txt -C categories.txt --adjustment none
-$ mieaa ora rno -M mirnas.txt -C categories.txt -a bonferonni --json -o results.json
+$ mieaa ora rno -M mirnas.txt -C categories.txt -a bonferroni --json -o results.json
 ```

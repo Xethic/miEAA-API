@@ -1,3 +1,5 @@
+.. This document gets split in docs/index.rst and docs/main.rst, see line ~32
+
 miEAA Command Line Interface and API
 ====================================
 
@@ -25,3 +27,34 @@ A REST API is also provided for scripting purposes:
    from mieaa import API
 
    mieaa_api = API()
+
+
+.. Do not modify/erase the following lines without updating docs/index.rst and docs/main.rst
+.. end_main
+.. start_installation
+
+
+Installation
+============
+
+Dependencies:
+
+* Python >= 3.5
+* Requests >= 2.19
+
+Python Package Index
+--------------------
+
+.. code::
+
+    $ pip install mieaa
+
+
+Conda |condaBadge|_
+-------------------
+.. |condaBadge| image::  https://anaconda.org/conda-forge/skidl/badges/installer/conda.svg
+.. _condaBadge: https://anaconda.org/ccb-sb/mieaa
+
+.. code::
+
+    $ conda install -c ccb-sb mieaa
