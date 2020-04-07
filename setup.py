@@ -11,7 +11,7 @@ setup(
     version=__version__,
     description='miEAA Command Line Interface and API',
     long_description=long_description,
-    long_description_content_type='text/markdown',
+    long_description_content_type='text/x-rst',
     license='MIT',
     author='Jeffrey Solomon',
     maintainer='Chair for Clinical Bioinformatics at Saarland University',
