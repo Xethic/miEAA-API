@@ -22,9 +22,10 @@ mieaa
    API.run_ora
    API.save_enrichment_results
 
+.. _examples:
+
 Examples
 ********
-.. _examples:
 
 Python
 ######
