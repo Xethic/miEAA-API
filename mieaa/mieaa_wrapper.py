@@ -59,7 +59,7 @@ class API:
         Unique identifier for enrichment analysis job of current session
     """
 
-    root_url = "https://www.ccb.uni-saarland.de/mieaa2/api/"
+    root_url = "https://ccb-compute2.cs.uni-saarland.de/mieaa2/api/"
     api_version = 'v1'
     wait_between_requests = 1
 
