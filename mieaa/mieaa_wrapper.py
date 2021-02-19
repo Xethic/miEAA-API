@@ -1,4 +1,5 @@
 import requests
+from datetime import datetime
 from http.client import RemoteDisconnected
 from io import IOBase
 from re import findall
@@ -53,6 +54,8 @@ class API:
         How many seconds to wait between API requests (due to throttling)
     default [class attribute] : dict
         Default settings to pass to converter or analysis apis
+    jobs [class attribute] : dict
+        Access jobs run by any API instances, keys are job_id and values are enrichment parameters
     session [instance attribute] : API_Session
         Session information necessary to retrieve results
     job_id [instance attribute] : uuid
@@ -64,12 +67,13 @@ class API:
     wait_between_requests = 1
 
     endpoints = {
-        'categories': 'enrichment_categories/{species}/{mirna}/',
+        'categories': 'enrichment_categories/{species}/{mirna}/{mode}',
         'mirbase_converter': 'mirbase_converter/',
         'mirna_type_converter': 'mirna_precursor_converter/',
         'enrichment': 'enrichment_analysis/{species}/{mirna}/{analysis}/',
         'results': 'enrichment_analysis/results/{job_id}/',
         'status': 'job_status/{job_id}/',
+        'gui_urls': 'gui_urls/?jobid={job_id}'
     }
 
     default_params = {
@@ -85,6 +89,8 @@ class API:
         }
     }
 
+    jobs = dict()
+
     def __init__(self):
         self.session = API_Session()
         self.job_id = None
@@ -99,6 +105,10 @@ class API:
         self._enrichment_parameters = None
         self._cached_results_type = None
         self.results_response = None
+
+    def load_job(self, job_id):
+        self.new_session()
+        self.job_id = job_id
 
     def convert_mirbase(self, mirnas: Union[str, Iterable[str], IO], from_version: float, to_version: float,
                                 mirna_type: str, to_file: Union[str, IO]='', **kwargs) -> List[str]:
@@ -336,8 +346,8 @@ class API:
             print(response.text)
             return response
 
-        self._enrichment_parameters = {'enrichment_analysis': analysis_type, **payload, **files}
-
+        self._enrichment_parameters = {'time': str(datetime.now()), 'enrichment_analysis': analysis_type, **payload, **files}
+        self.jobs[self.job_id] = self._enrichment_parameters
         return response
 
     def run_ora(self, test_set: Union[str, Iterable, IO], categories: Iterable, mirna_type: str,
@@ -499,7 +509,7 @@ class API:
             except requests.exceptions.ConnectionError as e:
                 pass
 
-    def get_enrichment_categories(self, mirna_type: str, species: str, with_suffix=False) -> dict:
+    def get_enrichment_categories(self, mirna_type: str, species: str, mode='all', with_suffix=False) -> dict:
         """ Get possible enrichment categories
 
         Parameters
@@ -518,6 +528,10 @@ class API:
             * *dre* - Danio rerio
             * *gga* - Gallus gallus
             * *ssc* - Sus scrofa
+        mode : str
+            * *all* - include both default and expert categories
+            * *default* - only show default (non-expert) categories
+            * *expert* - only show expert categories
         with_suffix : bool, default=False
             whether to include '_precursor' or '_mature' at end of category name
 
@@ -526,7 +540,7 @@ class API:
         dict
             Keys are categories and values are their descriptions
         """
-        url = self._get_endpoint('categories', species=species.lower(), mirna=mirna_type.lower())
+        url = self._get_endpoint('categories', species=species.lower(), mirna=mirna_type.lower(), mode=mode.lower())
         response = self.session.wait_get(url, wait=self.wait_between_requests)
         descriptive_http_error(response)
         categories = response.json()['categories']
@@ -563,6 +577,42 @@ class API:
         if not self.job_id:
             raise RuntimeError('No enrichment analysis has been initiated.')
         return self._enrichment_parameters
+
+    def get_gui_urls(self, job_id=None):
+        """ Retrieve graphical user inerface urls
+
+        Parameters
+        ----------
+        job_id : str, default=None
+            job id to get url for (if applicable). Will use current job_id if none provided.
+
+        Returns
+        -------
+        dict
+            Keys are short page names and values are their urls
+        """
+        use_job_id = job_id or self.job_id or ''
+        url = self._get_endpoint('gui_urls', job_id=use_job_id)
+        response = self.session.wait_get(url, wait=self.wait_between_requests)
+        descriptive_http_error(response)
+        return response.json()
+
+    def get_gui_url(self, page='input'):
+        """ Get specific url to gui page
+
+        Parameters
+        ----------
+        page : str, default='input'
+        * *input* - user input wizard
+        * *progress* - job progress
+        * *results* - job results
+
+        Returns
+        -------
+        str
+            URL for specified page
+        """
+        return self.get_gui_urls()[page]
 
     def _convert(self, converter_type, base_payload, to_file, default_overrides):
         """fill in defaults and return converted mirnas"""
