@@ -106,13 +106,11 @@ class API:
         self.session.close()
         self.__init__()
 
+    # TODO deprecate in next release
     def invalidate(self):
         """ Invalidate current session. Results will become irretrievable."""
-        self.session.close()
-        self.job_id = None
-        self._enrichment_parameters = None
-        self._cached_results_type = None
-        self.results_response = None
+        warnings.warn("`invalidate` will become deprecated in a future release; use `new_session` instead", FutureWarning)
+        self.new_session()
 
     def load_job(self, job_id):
         self.new_session()
@@ -584,8 +582,20 @@ class API:
             raise RuntimeError('No enrichment analysis has been initiated.')
         return self._enrichment_parameters
 
+    def get_gui_input_url(self):
+        """ Get url for webtool user input wizard """
+        return self._get_gui_url('input')
+
+    def get_gui_progress_url(self, job_id=None):
+        """ Get url for webtool progress page """
+        return self._get_gui_url('progress', job_id)
+
+    def get_gui_results_url(self, job_id=None):
+        """ Get url for webtool results page """
+        return self._get_gui_url('results', job_id)
+
     def get_gui_urls(self, job_id=None):
-        """ Retrieve graphical user inerface urls
+        """ Retrieve graphical user interface urls
 
         Parameters
         ----------
@@ -603,24 +613,11 @@ class API:
         descriptive_http_error(response)
         return response.json()
 
-    def get_gui_url(self, page='input'):
-        """ Get specific url to gui page
+    def _get_gui_url(self, page, job_id=None):
+        """ Get specific url to gui page, `page` a key should be in `get_gui_urls()` response"""
+        return self.get_gui_urls(job_id)[page]
 
-        Parameters
-        ----------
-        page : str, default='input'
-        * *input* - user input wizard
-        * *progress* - job progress
-        * *results* - job results
-
-        Returns
-        -------
-        str
-            URL for specified page
-        """
-        return self.get_gui_urls()[page]
-
-    def open_gui(self, page='input'):
+    def open_gui(self, page='input', job_id=None):
         """ Open specific page in browser
 
         Parameters
@@ -630,7 +627,9 @@ class API:
         * *progress* - job progress
         * *results* - job results
         """
-        webbrowser.open(self.get_gui_url(page))
+        url = self._get_gui_url(page, job_id)
+        webbrowser.open(url)
+        return url
 
     def _convert(self, converter_type, base_payload, to_file, default_overrides):
         """ Fill in defaults and return converted mirnas """
