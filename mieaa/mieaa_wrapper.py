@@ -103,6 +103,7 @@ class API:
         self.results_response = None
 
     def new_session(self):
+        """ Start a new session, clearing all job results """
         self.session.close()
         self.__init__()
 
@@ -583,7 +584,7 @@ class API:
         return self._enrichment_parameters
 
     def open_gui(self, page='input', job_id=None):
-        """ Open specific page in browser
+        """ Open specific mieaa web tool page in browser
 
         Parameters
         ----------
@@ -592,24 +593,12 @@ class API:
         * *progress* - job progress
         * *results* - job results
         """
-        url = self._get_gui_url(page, job_id)
+        url = self.get_gui_url(page, job_id)
         webbrowser.open(url)
         return url
 
-    def get_gui_input_url(self):
-        """ Get url for webtool user input wizard """
-        return self._get_gui_url('input')
-
-    def get_gui_progress_url(self, job_id=None):
-        """ Get url for webtool progress page """
-        return self._get_gui_url('progress', job_id)
-
-    def get_gui_results_url(self, job_id=None):
-        """ Get url for webtool results page """
-        return self._get_gui_url('results', job_id)
-
     def get_gui_urls(self, job_id=None):
-        """ Retrieve graphical user interface urls
+        """ Retrieve important mieaa webtool urls
 
         Parameters
         ----------
@@ -627,8 +616,23 @@ class API:
         descriptive_http_error(response)
         return response.json()
 
-    def _get_gui_url(self, page, job_id=None):
-        """ Get specific url to gui page, `page` a key should be in `get_gui_urls()` response"""
+    def get_gui_url(self, page, job_id=None):
+        """ Get specific url to page in web tool
+
+        Parameters
+        ----------
+        page : str
+            * *input* - user input wizard
+            * *progress* - job progress
+            * *results* - job results
+        job_id : str, default=None
+            Use job id in url if applicable. Will try current job_id if none provided.
+
+        Returns
+        -------
+        str
+            URL to specified mieaa webtool page
+        """
         return self.get_gui_urls(job_id)[page]
 
     def _convert(self, converter_type, base_payload, to_file, default_overrides):
