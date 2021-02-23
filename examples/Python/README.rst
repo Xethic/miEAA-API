@@ -182,8 +182,8 @@ Upon running an analysis, our API instance is assigned a unique Job
 ID.
 
 If we wish to reuse the same instance to run a new analysis, we must
-first invalidate it, making our current results irretrievable.
+create a new session.
 
 .. code:: python
 
-    mieaa_api.invalidate()
+    mieaa_api.new_session()

@@ -1,23 +1,28 @@
 import argparse
-from .mieaa_wrapper import API
-from ._version import __version__
+from mieaa.mieaa_wrapper import API
+from mieaa._version import __version__
 
 def type_converter(mieaa, args):
-    mirnas = args.mirna_set_file if args.mirna_set_file else args.mirna_set
+    mirnas = args.mirna_set_file or args.mirna_set
     return mieaa._convert_mirna_type(mirnas, args.parser_name, args.outfile,
                                     conversion_type=args.conv_type, output_format=args.out_format)
 
 
 def mirbase_converter(mieaa, args):
-    mirnas = args.mirna_set_file if args.mirna_set_file else args.mirna_set
+    mirnas = args.mirna_set_file or args.mirna_set
     formatting = 'oneline' if args.out_format == 'newline' else args.out_format
     return mieaa.convert_mirbase(mirnas, args.from_, args.to, args.mirna_type, args.outfile,
                                          output_format=args.out_format)
 
 
 def enrichment_analsis(mieaa, args):
-    mirnas = args.mirna_set_file if args.mirna_set_file else args.mirna_set
+    mirnas = args.mirna_set_file or args.mirna_set
     categories = args.categories_file.read().splitlines() if args.categories_file else args.categories
+    for option in ['all', 'default', 'defaults', 'expert']:
+        if option in categories:
+            categories.remove(option)
+            categories.extend(mieaa.get_enrichment_categories(args.mirna_type, args.species, option))
+    categories = set(categories)
 
     ref_set = ''
     if args.parser_name == 'ora':
@@ -29,12 +34,18 @@ def enrichment_analsis(mieaa, args):
     mieaa._start_analysis(args.parser_name.upper(), mirnas, categories, args.mirna_type, args.species, ref_set,
                          p_value_adjustment=args.adjustment, independent_p_adjust=args.indep_adjust,
                          significance_level=args.significance, threshold_level=args.threshold)
+    if args.verbose:
+        print(f'Started analysis with Job ID: {mieaa.job_id}')
 
+    if args.no_results:
+        return mieaa.job_id
     if args.outfile:
         return mieaa.save_enrichment_results(args.outfile, args.outfile_type)
-    else:
-        return mieaa.get_results()
+    return mieaa.get_results()
 
+
+def open_browser(mieaa, args):
+    return mieaa.open_gui(args.open, args.job_id)
 
 def create_subcommands(subparsers):
     def mutex_help_text(required=True):  # title and description of help groups
@@ -45,19 +56,22 @@ def create_subcommands(subparsers):
     # Abstract Parsers
     # ----------------
     # Parent parser with requirements inherited by all subcommands
-    abstract_parser = argparse.ArgumentParser(add_help=False)
-    mirna_set_group = abstract_parser.add_argument_group(*mutex_help_text(required=True))
+    base_parser = argparse.ArgumentParser(add_help=False)
+    base_parser.add_argument('-v', '--verbose', action='store_true', help='Always print results to stdout')
+
+    # Abstract parser for any commands involving mirnas
+    mirna_parser = argparse.ArgumentParser(add_help=False, parents=[base_parser])
+    mirna_set_group = mirna_parser.add_argument_group(*mutex_help_text(required=True))
     mirna_set_group.add_argument('-m', '--mirna-set', nargs='+', help='miRNA/precursor target set')
     mirna_set_group.add_argument('-M', '--mirna-set-file', type=argparse.FileType('r'),
         help='Specify miRNA/precursor target set via file')
-    abstract_parser.add_argument('-p', '--precursor', '--precursors', action='store_const', const='precursor',
+    mirna_parser.add_argument('-p', '--precursor', '--precursors', action='store_const', const='precursor',
         default='mirna', dest='mirna_type', help='Use if running on a set of precursors as opposed to miRNAs')
-    abstract_parser.add_argument('-o', '--outfile', type=argparse.FileType('w+'),
+    mirna_parser.add_argument('-o', '--outfile', type=argparse.FileType('w+'),
         help='Save results to provided file')
-    abstract_parser.add_argument('-v', '--verbose', action='store_true', help='Always print results to stdout')
 
     # Abstract Converter applicable to all converters
-    converter_parser = argparse.ArgumentParser(add_help=False, parents=[abstract_parser])
+    converter_parser = argparse.ArgumentParser(add_help=False, parents=[mirna_parser])
     output_style_group = converter_parser.add_mutually_exclusive_group()
     output_style_group.add_argument('--oneline', action='store_const', const='oneline', dest='out_format',
         default='oneline', help='Output style: Multi-mapped ids are separated by a semicolon (default)')
@@ -73,11 +87,13 @@ def create_subcommands(subparsers):
 
     # Abstract Analysis Parser
     species_choices = ['hsa', 'mmu', 'rno', 'ath', 'bta', 'cel', 'dme', 'dre', 'gga', 'ssc']
-    enrichment_parser = argparse.ArgumentParser(add_help=False, parents=[abstract_parser])
+    enrichment_parser = argparse.ArgumentParser(add_help=False, parents=[mirna_parser])
     enrichment_parser.add_argument('species', choices=species_choices, help='Species')
-    categories_group = enrichment_parser.add_argument_group(*mutex_help_text(required=True))
-    categories_group.add_argument('-c', '--categories', nargs='+',
-        help='Set of categories to include in analysis')
+    enrichment_parser.add_argument('-x', '--no-results', action='store_true',
+        help='Do not monitor progress or obtain results. Can retrieve later using Job ID.')
+    categories_group = enrichment_parser.add_argument_group(*mutex_help_text(required=False))
+    categories_group.add_argument('-c', '--categories', nargs='+', default=['default'],
+        help='Set of categories to include in analysis, can include `all`, `default`, `expert` or specific categories')
     categories_group.add_argument('-C', '--categories-file', type=argparse.FileType('r'),
         help='File specifying categories to include in analysis')
     enrichment_parser.add_argument('-t', '--threshold', type=int, default=2, nargs=1,
@@ -95,6 +111,10 @@ def create_subcommands(subparsers):
     output_format_group.add_argument('--json', action='store_const', const='json', dest='outfile_type',
         help="Store results in output file in json format (default is csv)")
     enrichment_parser.set_defaults(outfile_type='csv')
+
+    # Abstract Job Parser
+    job_parser = argparse.ArgumentParser(add_help=False, parents=[base_parser])
+    job_parser.add_argument('-j', '--jobid', type=str, dest='job_id', help='Job ID')
 
     # Concrete Subcommand Parsers
     # ---------------------------
@@ -129,6 +149,10 @@ def create_subcommands(subparsers):
         help='mirBase version to convert miRNAs/precursors from (default=22)')
     version_parser.set_defaults(parser_name='convert_mirbase', call=mirbase_converter)
 
+    # open webtool in browser parser
+    open_parser = subparsers.add_parser('open', help='Open MiEAA tool in browser', parents=[job_parser])
+    open_parser.add_argument('open', choices=('input', 'progress', 'results'), help='Open MiEAA interface in browser')
+    open_parser.set_defaults(parser_name='open', call=open_browser)
 
 def main():
     # check for mutually exclusive arguments (basically ArgumentParser.add_mutually_exclusive_group)
@@ -163,16 +187,22 @@ def main():
         selected_parser.error('unrecognized arguments: {}'.format(' '.join(unknown)))
 
     # check mutually exclusive flags
-    exclusivity_check(selected_parser, args.mirna_set, args.mirna_set_file, 'm')
-    if args.parser_name == 'ora' or args.parser_name == 'gsea':
-        exclusivity_check(selected_parser, args.categories, args.categories_file, 'c')
-    if args.parser_name == 'ora':
-        exclusivity_check(selected_parser, args.reference_set, args.reference_set_file, 'r', required=False)
+    try:
+        exclusivity_check(selected_parser, args.mirna_set, args.mirna_set_file, 'm')
+        if args.parser_name == 'ora' or args.parser_name == 'gsea':
+            exclusivity_check(selected_parser, args.categories, args.categories_file, 'c', required=False)
+        if args.parser_name == 'ora':
+            exclusivity_check(selected_parser, args.reference_set, args.reference_set_file, 'r', required=False)
+    except AttributeError:
+        pass
 
     mieaa = API()
     results = args.call(mieaa, args)
-    if args.verbose or not args.outfile:
-        print(results)
+    try:  # outfile not in all parsers
+        if args.verbose or not args.outfile:
+            print(results)
+    except AttributeError:
+        pass
 
 
 if __name__ == "__main__":

@@ -26,4 +26,4 @@ mieaa_api.save_enrichment_results('./results.csv')
 
 print(mieaa_api.get_enrichment_parameters())
 
-# mieaa_api.invalidate()
+mieaa_api.new_session()

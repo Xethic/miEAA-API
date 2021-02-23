@@ -1,13 +1,13 @@
 {% set name = "mieaa" %}
-{% set version = "0.2.2" %}
+{% set version = "0.3.0" %}
 
 package:
-  name: "{{ name|lower }}"
-  version: "{{ version }}"
+  name: {{ name|lower }}
+  version: {{ version }}
 
 source:
-  url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
-  sha256: 7739dd1dc300bdf48b4fcb0303f4bdcb85c791ebd86d4c2be4ad188f96fd946d
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: e701cbb6cc9586fe93dc686990ec8e96ca5f554296d0778cd2e5c3187278817f
 
 build:
   number: 0
@@ -15,7 +15,7 @@ build:
     python
   entry_points:
     - mieaa = mieaa.mieaa_cli:main
-  script: "{{ PYTHON }} -m pip install . -vv"
+  script: {{ PYTHON }} -m pip install . -vv
 
 requirements:
   host:
@@ -32,11 +32,11 @@ test:
     - mieaa --help
 
 about:
-  home: "https://www.ccb.uni-saarland.de/mieaa2'"
+  home: https://www.ccb.uni-saarland.de/mieaa2
   license: MIT
   license_family: MIT
   license_file: LICENSE
-  summary: "miEAA Command Line Interface and API"
+  summary: miEAA Command Line Interface and API
   doc_url: https://mieaa.readthedocs.io/en/latest/
   dev_url: https://github.com/Xethic/miEAA-API
 
