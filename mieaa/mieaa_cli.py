@@ -41,8 +41,10 @@ def enrichment_analsis(mieaa, args):
         return mieaa.save_enrichment_results(args.outfile, args.outfile_type)
     return mieaa.get_results()
 
+
 def open_browser(mieaa, args):
     return mieaa.open_gui(args.open, args.job_id)
+
 
 def create_subcommands(subparsers):
     def mutex_help_text(required=True):  # title and description of help groups
