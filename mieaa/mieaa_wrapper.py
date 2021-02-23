@@ -66,7 +66,7 @@ class API:
         Unique identifier for enrichment analysis job of current session
     """
 
-    root_url = "https://www.ccb.uni-saarland.de/mieaa2/api/"
+    root_url = "https://ccb-compute2.cs.uni-saarland.de/mieaa2"
     api_version = 'v1'
     wait_between_requests = 1
 
@@ -582,6 +582,20 @@ class API:
             raise RuntimeError('No enrichment analysis has been initiated.')
         return self._enrichment_parameters
 
+    def open_gui(self, page='input', job_id=None):
+        """ Open specific page in browser
+
+        Parameters
+        ----------
+        page : str, default='input'
+        * *input* - user input wizard
+        * *progress* - job progress
+        * *results* - job results
+        """
+        url = self._get_gui_url(page, job_id)
+        webbrowser.open(url)
+        return url
+
     def get_gui_input_url(self):
         """ Get url for webtool user input wizard """
         return self._get_gui_url('input')
@@ -616,20 +630,6 @@ class API:
     def _get_gui_url(self, page, job_id=None):
         """ Get specific url to gui page, `page` a key should be in `get_gui_urls()` response"""
         return self.get_gui_urls(job_id)[page]
-
-    def open_gui(self, page='input', job_id=None):
-        """ Open specific page in browser
-
-        Parameters
-        ----------
-        page : str, default='input'
-        * *input* - user input wizard
-        * *progress* - job progress
-        * *results* - job results
-        """
-        url = self._get_gui_url(page, job_id)
-        webbrowser.open(url)
-        return url
 
     def _convert(self, converter_type, base_payload, to_file, default_overrides):
         """ Fill in defaults and return converted mirnas """
