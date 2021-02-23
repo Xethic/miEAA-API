@@ -18,7 +18,7 @@ def mirbase_converter(mieaa, args):
 def enrichment_analsis(mieaa, args):
     mirnas = args.mirna_set_file or args.mirna_set
     categories = args.categories_file.read().splitlines() if args.categories_file else args.categories
-    for option in ['all', 'default', 'expert']:
+    for option in ['all', 'default', 'defaults', 'expert']:
         if option in categories:
             categories.remove(option)
             categories.extend(mieaa.get_enrichment_categories(args.mirna_type, args.species, option))
@@ -88,8 +88,8 @@ def create_subcommands(subparsers):
     enrichment_parser.add_argument('species', choices=species_choices, help='Species')
     enrichment_parser.add_argument('-x', '--no-results', action='store_true',
         help='Do not monitor progress or obtain results. Can retrieve later using Job ID.')
-    categories_group = enrichment_parser.add_argument_group(*mutex_help_text(required=True))
-    categories_group.add_argument('-c', '--categories', nargs='+',
+    categories_group = enrichment_parser.add_argument_group(*mutex_help_text(required=False))
+    categories_group.add_argument('-c', '--categories', nargs='+', default=['default'],
         help='Set of categories to include in analysis, can include `all`, `default`, `expert` or specific categories')
     categories_group.add_argument('-C', '--categories-file', type=argparse.FileType('r'),
         help='File specifying categories to include in analysis')
@@ -188,7 +188,7 @@ def main():
     try:
         exclusivity_check(selected_parser, args.mirna_set, args.mirna_set_file, 'm')
         if args.parser_name == 'ora' or args.parser_name == 'gsea':
-            exclusivity_check(selected_parser, args.categories, args.categories_file, 'c')
+            exclusivity_check(selected_parser, args.categories, args.categories_file, 'c', required=False)
         if args.parser_name == 'ora':
             exclusivity_check(selected_parser, args.reference_set, args.reference_set_file, 'r', required=False)
     except AttributeError:
