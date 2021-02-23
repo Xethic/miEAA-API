@@ -1,5 +1,4 @@
 from datetime import datetime
-from http.client import RemoteDisconnected
 from io import IOBase
 from re import findall
 from time import sleep, time

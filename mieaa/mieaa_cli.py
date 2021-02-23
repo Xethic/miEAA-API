@@ -34,9 +34,11 @@ def enrichment_analsis(mieaa, args):
     mieaa._start_analysis(args.parser_name.upper(), mirnas, categories, args.mirna_type, args.species, ref_set,
                          p_value_adjustment=args.adjustment, independent_p_adjust=args.indep_adjust,
                          significance_level=args.significance, threshold_level=args.threshold)
-    if args.verbose or args.no_results:
+    if args.verbose:
         print(f'Started analysis with Job ID: {mieaa.job_id}')
 
+    if args.no_results:
+        return mieaa.job_id
     if args.outfile:
         return mieaa.save_enrichment_results(args.outfile, args.outfile_type)
     return mieaa.get_results()
@@ -44,7 +46,6 @@ def enrichment_analsis(mieaa, args):
 
 def open_browser(mieaa, args):
     return mieaa.open_gui(args.open, args.job_id)
-
 
 def create_subcommands(subparsers):
     def mutex_help_text(required=True):  # title and description of help groups
@@ -152,7 +153,6 @@ def create_subcommands(subparsers):
     open_parser = subparsers.add_parser('open', help='Open MiEAA tool in browser', parents=[job_parser])
     open_parser.add_argument('open', choices=('input', 'progress', 'results'), help='Open MiEAA interface in browser')
     open_parser.set_defaults(parser_name='open', call=open_browser)
-
 
 def main():
     # check for mutually exclusive arguments (basically ArgumentParser.add_mutually_exclusive_group)
