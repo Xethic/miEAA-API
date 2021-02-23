@@ -15,9 +15,11 @@ mieaa
    API.to_mirna
    API.get_enrichment_categories
    API.get_enrichment_parameters
+   API.get_gui_url
    API.get_progress
    API.get_results
-   API.invalidate
+   API.new_session
+   API.open_gui
    API.run_gsea
    API.run_ora
    API.save_enrichment_results
